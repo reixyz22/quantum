@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quantum Flashcards</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="shared.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <nav>
+        <a href="index.html">Chapters</a>
+        <a href="flashcards.html" aria-current="page">Flashcards</a>
+      </nav>
+      <div class="size-controls" aria-label="Text size">
+        <button data-size="-1" aria-label="Smaller text">A−</button>
+        <button data-size="1" aria-label="Larger text">A+</button>
+      </div>
+    </header>
+
+    <h1>Flashcards</h1>
+    <div class="chips" id="decks" role="group" aria-label="Deck"></div>
+
+    <button class="card" id="card" aria-live="polite">
+      <span class="side" id="side">Question</span>
+      <span id="text"></span>
+    </button>
+
+    <div class="controls">
+      <button id="prev">← Back</button>
+      <button id="flip" class="primary">Flip</button>
+      <button id="next">Next →</button>
+    </div>
+    <p class="progress"><span id="pos"></span> · <a href="#" id="shuffle">Shuffle</a></p>
+    <p class="hint">Tap the card to flip. On a keyboard: space flips, arrow keys move.</p>
+  </div>
+
+  <script src="data/flashcards.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let deck = window.DECKS[0];
+    let order = [];
+    let i = 0;
+    let flipped = false;
+
+    function useDeck(d) {
+      deck = d;
+      order = d.cards.map((_, n) => n);
+      i = 0;
+      flipped = false;
+      document.querySelectorAll("#decks button").forEach((b) =>
+        b.setAttribute("aria-pressed", String(b.dataset.id === d.id)));
+      render();
+    }
+
+    function render() {
+      const card = deck.cards[order[i]];
+      $("side").textContent = flipped ? "Answer" : "Question";
+      $("text").textContent = flipped ? card.a : card.q;
+      $("card").classList.toggle("flipped", flipped);
+      $("pos").textContent = `${i + 1} / ${order.length}`;
+    }
+
+    function move(step) {
+      i = (i + step + order.length) % order.length;
+      flipped = false;
+      render();
+    }
+
+    function flip() { flipped = !flipped; render(); }
+
+    for (const d of window.DECKS) {
+      const b = document.createElement("button");
+      b.textContent = `${d.title} (${d.cards.length})`;
+      b.dataset.id = d.id;
+      b.addEventListener("click", () => useDeck(d));
+      $("decks").appendChild(b);
+    }
+
+    $("card").addEventListener("click", flip);
+    $("flip").addEventListener("click", flip);
+    $("next").addEventListener("click", () => move(1));
+    $("prev").addEventListener("click", () => move(-1));
+    $("shuffle").addEventListener("click", (e) => {
+      e.preventDefault();
+      for (let k = order.length - 1; k > 0; k--) {
+        const j = Math.floor(Math.random() * (k + 1));
+        [order[k], order[j]] = [order[j], order[k]];
+      }
+      i = 0; flipped = false; render();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") move(1);
+      else if (e.key === "ArrowLeft") move(-1);
+      else if (e.key === " " && e.target === document.body) { e.preventDefault(); flip(); }
+    });
+
+    useDeck(deck);
+  </script>
+</body>
+</html>

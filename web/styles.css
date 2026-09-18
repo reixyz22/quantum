@@ -1,0 +1,191 @@
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --text: #1c1b19;
+  --muted: #5f5c55;
+  --line: #e3e0d8;
+  --accent: #2b59c3;
+  --accent-soft: #e6ecfa;
+  --good: #1f7a4d;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-size: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141414;
+    --surface: #1e1e1e;
+    --text: #ecebe8;
+    --muted: #a6a39c;
+    --line: #333230;
+    --accent: #8fb0ff;
+    --accent-soft: #23304d;
+    --good: #6fd19e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: var(--font-size); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.55;
+}
+
+.wrap {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding-inline: 1rem;
+  padding-block: 1rem 4rem;
+}
+
+header.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+  margin-right: 1rem;
+  font-weight: 600;
+}
+nav a[aria-current="page"] { color: var(--text); }
+
+.size-controls button {
+  font: inherit;
+  font-size: 0.85rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.5rem; }
+h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+p.lede { color: var(--muted); margin-top: 0; }
+
+code, .mono {
+  font-family: var(--mono);
+  font-size: 0.92em;
+  background: var(--accent-soft);
+  padding: 0.05em 0.3em;
+  border-radius: 0.25em;
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+/* Chapters */
+.chapter {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.chapter > summary {
+  cursor: pointer;
+  padding: 1rem;
+  font-weight: 700;
+  list-style: none;
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+.chapter > summary::-webkit-details-marker { display: none; }
+.chapter .num { color: var(--muted); font-family: var(--mono); font-weight: 400; }
+.chapter .status { margin-left: auto; font-weight: 400; }
+.chapter .body { padding: 0 1rem 1rem; }
+.chapter.locked > summary { color: var(--muted); cursor: default; }
+.chapter ol li { margin-bottom: 0.5rem; }
+
+.check {
+  border-left: 4px solid var(--accent);
+  padding: 0.5rem 0.75rem;
+  background: var(--accent-soft);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.check summary { cursor: pointer; font-weight: 600; margin-top: 0.5rem; }
+
+/* Flashcards */
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.chips button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.chips button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.card {
+  width: 100%;
+  min-height: 14rem;
+  padding: 1.25rem;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 1rem;
+  cursor: pointer;
+  white-space: pre-line;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.card .side {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.card.flipped { border-color: var(--good); }
+.card.flipped .side { color: var(--good); }
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.controls button {
+  font: inherit;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.controls button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.progress { color: var(--muted); text-align: center; margin-top: 0.75rem; }
+.hint { color: var(--muted); font-size: 0.8rem; }

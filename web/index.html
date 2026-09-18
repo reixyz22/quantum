@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grover, One Door at a Time</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="shared.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <nav>
+        <a href="index.html" aria-current="page">Chapters</a>
+        <a href="flashcards.html">Flashcards</a>
+      </nav>
+      <div class="size-controls" aria-label="Text size">
+        <button data-size="-1" aria-label="Smaller text">A−</button>
+        <button data-size="1" aria-label="Larger text">A+</button>
+      </div>
+    </header>
+
+    <h1>Grover, one door at a time</h1>
+    <p class="lede">Building Grover's search algorithm in Cirq, one idea per chapter. Each chapter matches a Python file in the repo.</p>
+
+    <div id="chapters"></div>
+  </div>
+
+  <script src="data/chapters.js"></script>
+  <script>
+    const root = document.getElementById("chapters");
+    for (const ch of window.CHAPTERS) {
+      const d = document.createElement("details");
+      d.className = "chapter" + (ch.status === "locked" ? " locked" : "");
+      const s = document.createElement("summary");
+      const icon = ch.status === "done" ? "⭐" : ch.status === "locked" ? "🔒" : "✏️";
+      s.innerHTML = `<span class="num">${ch.num}</span><span>${ch.title}</span><span class="status">${icon}</span>`;
+      d.appendChild(s);
+      if (ch.body) {
+        const b = document.createElement("div");
+        b.className = "body";
+        b.innerHTML = `<p class="hint">Code: <code>${ch.file}</code></p>` + ch.body;
+        d.appendChild(b);
+      } else {
+        s.addEventListener("click", (e) => e.preventDefault());
+      }
+      root.appendChild(d);
+    }
+  </script>
+</body>
+</html>
