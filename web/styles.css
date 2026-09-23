@@ -1,4 +1,21 @@
+/* Dark is the default: this gets read late at night. Light is opt-in via the
+   header toggle, which sets data-theme="light" on <html>. */
 :root {
+  color-scheme: dark;
+  --bg: #15140f;
+  --surface: #1e1c17;
+  --text: #ddd9cf;      /* not pure white; pure white on near-black glares */
+  --muted: #99958b;
+  --line: #302d26;
+  --accent: #9db4ea;
+  --accent-soft: #22293a;
+  --good: #74c79b;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-size: 20px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
   --bg: #fbfaf7;
   --surface: #ffffff;
   --text: #1c1b19;
@@ -7,21 +24,6 @@
   --accent: #2b59c3;
   --accent-soft: #e6ecfa;
   --good: #1f7a4d;
-  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
-  --font-size: 20px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141414;
-    --surface: #1e1e1e;
-    --text: #ecebe8;
-    --muted: #a6a39c;
-    --line: #333230;
-    --accent: #8fb0ff;
-    --accent-soft: #23304d;
-    --good: #6fd19e;
-  }
 }
 
 * { box-sizing: border-box; }
