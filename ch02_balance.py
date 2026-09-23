@@ -5,7 +5,7 @@ import cirq
 
 from qtools import peek, sample_locally
 
-N_QUBITS = 3
+N_QUBITS = 4
 
 
 def build_circuit(n=N_QUBITS):
@@ -14,12 +14,14 @@ def build_circuit(n=N_QUBITS):
     return circuit, tuple(qubits)
 
 
-# The amount Grover's math predicts on every label: 1/sqrt(N).
+# Chances first, amounts second. Going the other way is what trips people up.
 def predicted(n):
-    size = 2 ** n
-    amount = 1 / math.sqrt(size)
-    print(f"{n} qubits -> {size} labels, each amount 1/sqrt({size}) = {amount:.3f}")
-    print(f"each chance: {amount:.3f}^2 = {amount ** 2:.4f}  ({size} x that = 1.0)")
+    labels = 2 ** n                     # N: the number of possible answers, not the qubit count
+    chance = 1 / labels                 # fair share, and all N of these add to 1
+    amount = math.sqrt(chance)          # the amount is the SQUARE ROOT of the chance
+    print(f"{n} qubits -> N = 2^{n} = {labels} labels")
+    print(f"  chance on each: 1/{labels} = {chance:.4f}   (x{labels} = {chance * labels:.1f})")
+    print(f"  amount on each: sqrt({chance:.4f}) = {amount:.3f}   (squares back to {amount ** 2:.4f})")
 
 
 if __name__ == "__main__":
