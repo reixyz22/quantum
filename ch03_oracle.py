@@ -3,12 +3,14 @@ import cirq
 
 from qtools import peek, sample_locally
 
-SECRET = "101"
+SECRET = "111"
 
 
-# The controlled Z only fires when every qubit reads 1. So: X the qubits that
-# are supposed to read 0, let it fire, then X them back. Net effect is a sign
-# flip on exactly the secret label and nothing else.
+# The controlled Z fires only when every qubit reads 1, so for the all-1s
+# secret the oracle is literally one gate.
+#
+# For any other secret: X the qubits that are supposed to read 0, let it fire,
+# then X them back. Same one gate, wearing a disguise.
 def oracle(qubits, secret):
     flips = [cirq.X(q) for q, bit in zip(qubits, secret) if bit == "0"]
     return cirq.Circuit(
