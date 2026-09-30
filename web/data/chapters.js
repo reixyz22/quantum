@@ -185,13 +185,60 @@ circuit.append(oracle_gate.on(*qubits))   # a 32x32 matrix. hardware does not.</
     file: "ch06_diffuser.py",
     status: "in progress",
     body: `
-      <p>This one is an <b>exercise</b>. Three blank functions and a self-checking runner that reports which blank is next and, on a wrong answer, prints what it expected next to what you produced.</p>
-      <pre>def average(amounts): ...
-def reflect_one(value, avg): ...
-def diffuse(amounts): ...</pre>
+      <p><b>This chapter is an exercise.</b> Three blank functions in the file, and a
+      self-checking runner that reports which blank is next and, on a wrong answer,
+      prints what it expected beside what you produced.</p>
+      <pre>python ch06_diffuser.py</pre>
+
       <h2>The idea</h2>
-      <p>Reflect every amplitude around the average. The minus sign the oracle left is invisible to measurement, but it is <b>not</b> invisible to an average &mdash; it drags the average down, and then reflecting throws the winner far up while the losers collapse.</p>
-      <p>No quantum code in the file. It's a plain Python list, which is genuinely how the amplitudes are stored.</p>
+      <p>Reflect every amplitude around the average. The minus sign the oracle left is
+      invisible to measurement, but it is <b>not</b> invisible to an average &mdash; it drags the
+      average down. Reflecting then throws the winner far up while the losers collapse.</p>
+      <p>No quantum code in the file. It's a plain Python list, which is genuinely how the
+      amplitudes are stored.</p>
+
+      <h2>The three blanks</h2>
+      <pre>def average(amounts):
+    """Return the mean of the list.
+
+    You need the total, and how many there are.
+    """</pre>
+      <pre>def reflect_one(value, avg):
+    """Move value to the other side of avg, the same distance away.
+
+    If avg is 10 and value is 7, the answer is 13: it was 3 below, so it
+    comes back 3 above. If avg is 10 and value is 12, the answer is 8.
+    A value already equal to avg does not move.
+
+    Work the arithmetic out from that description. It is one line.
+    """</pre>
+      <pre>def diffuse(amounts):
+    """Return a NEW list with every amplitude reflected about the average.
+
+    Use the two functions above. Build a new list, don't edit the one you
+    were handed.
+    """</pre>
+
+      <h2>Syntax you might want</h2>
+      <ul>
+        <li><code>sum(my_list)</code> adds a list of numbers. <code>len(my_list)</code> counts them.</li>
+        <li>Division is <code>/</code> and gives a float: <code>7 / 2</code> is <code>3.5</code>.</li>
+        <li>To build a new list in a loop:
+          <pre>out = []
+for value in amounts:
+    out.append(something)
+return out</pre></li>
+        <li>No comprehensions needed. The expanded loop is what I'd write here anyway.</li>
+      </ul>
+
+      <h2>What passing looks like</h2>
+      <p>When all three work it runs one extra demo &mdash; 8 labels, winner marked:</p>
+      <pre>before: [0.354, ... , -0.354]
+after:  [0.177, ... ,  0.885]
+winner's chance went from 12.5% to 78.3%</pre>
+      <p><b>One round. 12.5% to 78%.</b> That's the diffuser doing the thing the oracle couldn't.</p>
+      <p>The worked answer is in <code>ch06_diffuser_answer.py</code> if you get stuck, but the three
+      docstrings are the whole spec, and <code>reflect_one</code> really is one line.</p>
       <div class="check">
         <b>Check:</b> After the oracle you have <code>[0.5, 0.5, &minus;0.5, 0.5]</code>. What's the average, and where does each amplitude land?
         <details><summary>Answer</summary>Average 0.25. Reflecting gives <code>[0, 0, 1, 0]</code> &mdash; the three losers sat just above the average so they drop to zero, and the winner sat far below it so it goes to 1.0. That's 100% on the winner after one round.</details>

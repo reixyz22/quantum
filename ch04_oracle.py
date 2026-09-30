@@ -56,11 +56,7 @@ def show_amplitudes(state, target: int, per_row: int = 4, cap: int = 64) -> None
     row = "   "
     for label in range(size):
         amplitude = state[label].real
-        if amplitude < 0:
-            mark = "<"
-        else:
-            mark = " "
-        row += f" {label_text(label, target)} {amplitude:+.3f}{mark}"
+        row += f" {label_text(label, target)} {amplitude:+.3f}"
         if (label + 1) % per_row == 0:
             print(row)
             row = "   "
