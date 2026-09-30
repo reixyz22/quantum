@@ -12,7 +12,7 @@ ch01_amplitudes.py        amplitudes and signs; X flips the bit, Z flips the sig
 ch02_many_qubits.py       the tensor product, 2**n labels, the even split
 ch03_marking.py           a controlled Z marks one label, invisibly
 ch04_oracle.py            an oracle built from a rule, pointed at any semiprime
-ch05_compiling.py         matrix vs gates, and checking a compile was correct
+ch05_compiling.py         exercise: build the oracle from gates (answer in _answer.py)
 ch06_diffuser.py          exercise: write the diffuser (answer in _answer.py)
 appendix_entanglement.py  Bell state, off the critical path
 

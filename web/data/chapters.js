@@ -148,13 +148,48 @@ after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
     file: "ch05_compiling.py",
     status: "in progress",
     body: `
+      <p><b>This chapter is an exercise.</b> Three blanks, same self-checking runner as
+      chapter 6 &mdash; except this one also compares your gates against chapter 4's matrix
+      and tells you whether they do the same job.</p>
+      <pre>python ch05_compiling.py</pre>
+
       <h2>The seam</h2>
       <pre>circuit.append(cirq.H(q0))                # a real gate. hardware has this.
 circuit.append(oracle_gate.on(*qubits))   # a 32x32 matrix. hardware does not.</pre>
-      <p>A matrix says <i>what</i> should happen. Gates say <i>how</i>. The matrix is <b>opaque</b>: a compiler can simulate it but can't decompose it, can't route it onto a chip's connectivity, and can't cancel it against a neighbour. A matrix is a wish; gates are a program.</p>
+      <p>A matrix says <i>what</i> should happen. Gates say <i>how</i>. The matrix is
+      <b>opaque</b>: a compiler can simulate it but can't decompose it, can't route it onto a
+      chip's connectivity, and can't cancel it against a neighbour. A matrix is a wish;
+      gates are a program.</p>
 
-      <h2>Built from gates instead</h2>
-      <pre>0: ───────@───────
+      <h2>The three blanks</h2>
+      <pre>def positions_needing_x(text):
+    """Which positions of text hold a "0"?
+
+    A controlled Z only fires when every qubit reads 1, so any qubit
+    that should read 0 needs an X first, to disguise it as a 1.
+
+    "11101" -> [3].   "1010" -> [1, 3].
+    """</pre>
+      <pre>def disguise(qubits, text):
+    """One X gate on each qubit that needs disguising.
+
+    cirq.X(qubit) makes an X. qubits[3] is the fourth qubit.
+    Empty list is fine if the label has no zeros.
+    """</pre>
+      <pre>def oracle_from_gates(qubits, text):
+    """Assemble the whole thing: disguise, fire, undisguise.
+
+    Three appends. The SAME disguise list works both times, because
+    two X gates on one qubit cancel. controlled_z() is written for you.
+    """</pre>
+
+      <h2>What passing looks like</h2>
+      <pre>target   4 (2 x 2), winner 1010: 5 gates, depth 3 -> same operation
+target   6 (2 x 3), winner 1011: 3 gates, depth 3 -> same operation
+target  15 (3 x 5), winner 11101: 3 gates, depth 3 -> same operation
+target  21 (3 x 7), winner 0110111: 5 gates, depth 3 -> same operation
+
+0: ───────@───────
           │
 1: ───────@───────
           │
@@ -163,17 +198,18 @@ circuit.append(oracle_gate.on(*qubits))   # a 32x32 matrix. hardware does not.</
 3: ───X───@───X───
           │
 4: ───────Z───────</pre>
-      <p>The winner for 15 is <code>11101</code>, and only position 3 is a <code>0</code>. So: X that qubit so the winner reads as all 1s, fire the controlled Z, then X it back. Three gates, depth 3.</p>
+      <p>Three gates, depth 3, replacing a 32&times;32 matrix. The check uses
+      <code>cirq.allclose_up_to_global_phase</code> on the two unitaries &mdash; collapse each
+      circuit to the single matrix it represents and compare. "Up to global phase" matters
+      because multiplying an <i>entire</i> state by &minus;1 changes no measurement, so two
+      circuits differing only by that are the same operation.</p>
 
-      <h2>Checking the compile was right</h2>
-      <pre>cirq.allclose_up_to_global_phase(
-    cirq.unitary(described),
-    cirq.unitary(built),
-)   # True</pre>
-      <p>Collapse each circuit to the single matrix it represents and compare. "Up to global phase" matters: multiplying an <i>entire</i> state by &minus;1 changes no measurement, so two circuits differing only by that are the same operation and the comparison has to allow it.</p>
-
-      <h2>Still missing</h2>
-      <p>Our gate version is laid out <b>from the known winner</b>, which is the same cheat in different clothing. A real compiled oracle is a multiplier plus a comparator, and nothing in it knows what 3 or 5 are. Cirq can also do the decomposition automatically &mdash; feed the opaque matrix to <code>cirq.optimize_for_target_gateset</code> and watch real gates fall out. That's the rest of this chapter.</p>
+      <h2>Still missing after this</h2>
+      <p>Your gates get laid out <b>from the known winner</b>, which is the chapter 4 cheat in
+      different clothing. A real compiled oracle is a multiplier plus a comparator, and
+      nothing in it knows what 3 or 5 are. Cirq can also do decomposition automatically
+      &mdash; feed the opaque matrix to <code>cirq.optimize_for_target_gateset</code> and watch
+      real gates fall out. That's the rest of this chapter.</p>
       <div class="check">
         <b>Check:</b> Why does a compiler care whether the oracle is a matrix or gates, if both simulate to the same answer?
         <details><summary>Answer</summary>Because it can only optimise what it can see inside. Gates can be decomposed to a chip's native set, reordered, routed around missing connections, and cancelled against neighbours. A matrix admits none of that.</details>
