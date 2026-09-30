@@ -1,6 +1,4 @@
 """Shared tools used by every chapter. The lessons live in the chNN_*.py files."""
-import os
-
 import cirq
 import cirq_superstaq as css
 from dotenv import load_dotenv
@@ -23,8 +21,8 @@ def sample_locally(circuit, qubits, shots=100):
 
 
 def run_on_superstaq(circuit, qubits, shots=100):
-    load_dotenv()
-    service = css.Service(api_key=os.getenv("SUPER_STAQ"))
+    load_dotenv()           # puts SUPERSTAQ_API_KEY into the environment
+    service = css.Service()  # cirq_superstaq reads that variable itself
     job = service.create_job(
         circuit + cirq.measure(*qubits),
         repetitions=shots,

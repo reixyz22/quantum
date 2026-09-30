@@ -1,10 +1,19 @@
-"""Choosing and describing a factoring puzzle. No quantum anything in here.
+"""Picking a factoring puzzle for Grover to solve. No quantum code in here.
 
-This is the classical side: which target numbers make a good puzzle, how big
-a register one needs, and how to read a label back as two numbers. The web
-app's buttons and any API around them come from this file.
+Two words from classical computing that this file leans on:
 
-Deliberately imports no cirq. If it ever needs to, something has drifted.
+  register  a named group of qubits treated together as one number. Here we
+            use 6 qubits as two registers of 3: `a` is the first three, `b`
+            is the last three.
+  label     one possible reading of the whole register, like 011101. Six
+            qubits give 2**6 = 64 of them. The textbook name is a "basis
+            state"; label is just shorter to say.
+
+So: which target numbers make a good puzzle, how many bits each number
+needs, and how to read a label back as `a` and `b`. The web app's buttons
+come from here.
+
+Imports no cirq on purpose. If it ever needs to, something has drifted.
 """
 
 # 5 bits per number is 10 qubits and 1024 labels, which is about where the
