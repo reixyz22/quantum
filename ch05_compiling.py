@@ -1,4 +1,6 @@
-"""Build the same oracle twice, then prove the two agree.
+"""Chapter 5: from a matrix to gates a chip could actually run.
+
+Build the same oracle twice, then prove the two agree.
 
 The matrix version in ch03d is a description: "put a minus here". It is not
 something a chip could run. This file builds the same thing out of gates a

@@ -1,4 +1,4 @@
-"""Ch04, first rung: the diffuser as plain arithmetic. No quantum here at all.
+"""Chapter 6, worked answer: the diffuser as plain arithmetic. No quantum at all.
 
 Four labels, so four amounts. Label 2 is the winner.
 """

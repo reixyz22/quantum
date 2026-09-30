@@ -1,7 +1,11 @@
-"""Compiling the factoring checker into a circuit that flips one sign.
+"""Chapter 4: an oracle built from a rule, not from a stored answer.
 
-The checker itself lives in targets.py. This file's only job is turning it
-into gates, which is the thing a quantum compiler does.
+The rule is "a times b equals the target", and it lives in targets.py. The
+winning label is never written down anywhere: it falls out of asking the
+rule about every label.
+
+Start with target 4, where a=2 and b=2 and there are only 16 labels, then
+look at 15.
 """
 import numpy as np
 import cirq
@@ -82,4 +86,6 @@ def report(target: int) -> None:
 
 
 if __name__ == "__main__":
+    report(4)
+    print()
     report(15)

@@ -1,4 +1,8 @@
-"""Chapter 3: the oracle. One new gate, which puts a minus sign on |111>."""
+"""Chapter 3: marking the winner. One gate puts a minus sign on |111>.
+
+The mark is real in the amplitudes and invisible to any measurement, which
+is why the oracle alone finds nothing.
+"""
 import cirq
 
 from qtools import peek, sample_locally

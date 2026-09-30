@@ -5,16 +5,23 @@ Learning Grover's search algorithm from scratch in [Cirq](https://quantumai.goog
 ## Layout
 
 ```
-qtools.py              shared tools: peek (show the hidden state vector), sample_locally, run_on_superstaq
-targets.py             classical side: which numbers make a good factoring puzzle (no cirq)
-ch00_bell.py           amounts, labels, entanglement (H + CNOT)
-ch01_interference.py   interference: H twice cancels back to the start
-web/                   site source (chapters + flashcards)
-tools/build_site.mjs   assembles web/ into dist/ and stamps the commit
-dist/                  build output, gitignored, what Vercel serves
+qtools.py                 shared tools: peek (show the hidden state vector), sample_locally
+targets.py                classical side: which semiprimes make a good puzzle (no cirq)
+
+ch01_amplitudes.py        amplitudes and signs; X flips the bit, Z flips the sign
+ch02_many_qubits.py       the tensor product, 2**n labels, the even split
+ch03_marking.py           a controlled Z marks one label, invisibly
+ch04_oracle.py            an oracle built from a rule, pointed at any semiprime
+ch05_compiling.py         matrix vs gates, and checking a compile was correct
+ch06_diffuser.py          exercise: write the diffuser (answer in _answer.py)
+appendix_entanglement.py  Bell state, off the critical path
+
+web/                      site source (chapters + flashcards)
+tools/build_site.mjs      assembles web/ into dist/ and stamps the commit
+dist/                     build output, gitignored, what Vercel serves
 ```
 
-Each new concept gets its own `chNN_topic.py`. Every chapter exposes `build_circuit() -> (circuit, qubits)` so the site can export all chapters the same way.
+One idea per chapter, one file per chapter. `web/data/chapters.js` keeps `num` and `file` as separate fields so the curriculum order and the filenames can be renumbered independently.
 
 ## Run a chapter
 
@@ -22,7 +29,7 @@ Each new concept gets its own `chNN_topic.py`. Every chapter exposes `build_circ
 python -m venv .venv
 .venv\Scripts\activate
 pip install cirq cirq-superstaq python-dotenv
-python ch01_interference.py
+python ch01_amplitudes.py
 ```
 
 `run_on_superstaq` reads a `SUPER_STAQ` API key from `.env` (gitignored) and uses `method="dry-run"`, so no real QPU time is spent.

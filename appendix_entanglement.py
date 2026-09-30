@@ -1,7 +1,11 @@
-"""Chapter 0: amounts, labels, and entanglement (H then CNOT)."""
+"""Appendix: entanglement (H then CNOT), which Grover never actually needs.
+
+Kept because it is the standard hello-world and because "can you explain
+entanglement" is a fair question. Nothing downstream depends on it.
+"""
 import cirq
 
-from qtools import peek, sample_locally, run_on_superstaq
+from qtools import peek, sample_locally
 
 
 def build_circuit():
@@ -18,4 +22,3 @@ if __name__ == "__main__":
     print(circuit)
     peek(circuit)
     sample_locally(circuit, qubits)
-    run_on_superstaq(circuit, qubits)

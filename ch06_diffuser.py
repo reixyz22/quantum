@@ -1,4 +1,4 @@
-"""Ch04 exercise: write the diffuser yourself.
+"""Chapter 6: write the diffuser yourself.
 
 Three blanks. Fill them in and run the file; it tells you which ones work and
 what it expected. Run it as often as you like.
@@ -6,7 +6,7 @@ what it expected. Run it as often as you like.
 No cirq in here. This is plain Python on a list of numbers, which is genuinely
 how the amplitudes are stored.
 
-If you get stuck the worked answer is in ch04_diffuser_answer.py, but try the
+If you get stuck the worked answer is in ch06_diffuser_answer.py, but try the
 blanks first.
 """
 from __future__ import annotations
