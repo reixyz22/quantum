@@ -2,50 +2,92 @@
 
 Two words from classical computing that this file leans on:
 
-  register  a named group of qubits treated together as one number. Here we
-            use 6 qubits as two registers of 3: `a` is the first three, `b`
-            is the last three.
-  label     one possible reading of the whole register, like 011101. Six
-            qubits give 2**6 = 64 of them. The textbook name is a "basis
+  register  a named group of qubits treated together as one number. We use
+            two: one holding `a`, one holding `b`. They are different sizes,
+            for reasons explained at register_bits below.
+  label     one possible reading of both registers together, like 01101.
+            n qubits give 2**n of them. The textbook name is a "basis
             state"; label is just shorter to say.
 
-So: which target numbers make a good puzzle, how many bits each number
-needs, and how to read a label back as `a` and `b`. The web app's buttons
-come from here.
+Targets are semiprimes: a product of exactly two primes, like 15 = 3 x 5 or
+9 = 3 x 3. That guarantees exactly one answer, which keeps Grover's round
+count fixed and predictable.
 
 Imports no cirq on purpose. If it ever needs to, something has drifted.
 """
+from __future__ import annotations   # lets `| None` work on Python 3.9
 
-# 5 bits per number is 10 qubits and 1024 labels, which is about where the
-# simulator stops being pleasant to wait on.
-MAX_BITS = 5
+from math import isqrt
+
+# 10 qubits is 1024 labels, which is about where the simulator stops being
+# pleasant to wait on.
+MAX_QUBITS = 10
 
 
-def bits_for(target: int) -> int:
-    """How many bits each of the two numbers needs.
+def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    for divisor in range(2, isqrt(n) + 1):
+        if n % divisor == 0:
+            return False
+    return True
 
-    Any non-trivial factor of `target` is at most target // 2, so a register
-    that holds target // 2 holds every factor we care about. Derived from the
-    target alone and never from its factors: sizing the register to fit the
-    real factor would leak how big it is.
+
+def factor_pair(target: int) -> tuple[int, int] | None:
+    """The two primes that multiply to `target`, smaller first.
+
+    Returns None if there aren't exactly two, which rules out primes (13),
+    prime cubes (8 = 2 x 4) and anything with several factorisations
+    (12 = 2 x 6 and 3 x 4).
     """
-    needed = (target // 2).bit_length()
-    if needed < 2:
-        return 2
-    return needed
+    for a in range(2, isqrt(target) + 1):
+        if target % a != 0:
+            continue
+        b = target // a
+        if is_prime(a) and is_prime(b):
+            return a, b
+        return None     # smallest factor found, but not a clean pair
+    return None         # prime: no factor at or below the square root
 
 
-def split_label(label: int, bits: int) -> tuple[int, int]:
-    """Turn a label number into its two halves, as numbers."""
-    text = format(label, "0" + str(bits * 2) + "b")
-    a = int(text[0:bits], 2)
-    b = int(text[bits:], 2)
-    return a, b
+def register_bits(target: int) -> tuple[int, int]:
+    """How many bits each register needs: (for a, for b).
+
+    The two registers are deliberately different sizes.
+
+    We require a <= b, so `a` can never be larger than the square root of
+    the target. For 62 that caps `a` at 7, which is 3 bits, not the 5 that
+    `b` needs to hold 31. Sizing both registers for the worst case would
+    give away 2 qubits and quadruple the search space for nothing.
+
+    `b` is bounded the other way: the smallest `a` can be is 2, so `b` is at
+    most target // 2.
+
+    Both bounds come from the target alone, never from its factors. Sizing a
+    register to fit the real factor would leak how big that factor is.
+    """
+    a_bits = isqrt(target).bit_length()
+    b_bits = (target // 2).bit_length()
+    return a_bits, b_bits
 
 
-def label_text(label: int, bits: int) -> str:
+def qubit_count(target: int) -> int:
+    a_bits, b_bits = register_bits(target)
+    return a_bits + b_bits
+
+
+def label_text(label: int, target: int) -> str:
     """The label as the string of 0s and 1s that peek would print."""
-    return format(label, "0" + str(bits * 2) + "b")
+    return format(label, "0" + str(qubit_count(target)) + "b")
+
+
+def split_label(label: int, target: int) -> tuple[int, int]:
+    """Read a label back as the two numbers its registers hold."""
+    a_bits, _ = register_bits(target)
+    text = label_text(label, target)
+    a = int(text[0:a_bits], 2)
+    b = int(text[a_bits:], 2)
+    return a, b
 
 
 def passes(a: int, b: int, target: int) -> bool:
@@ -57,48 +99,41 @@ def passes(a: int, b: int, target: int) -> bool:
     return a * b == target
 
 
-def factor_pairs(target: int) -> list[tuple[int, int]]:
-    """The (a, b) pairs the checker accepts. Plain divisor arithmetic."""
-    pairs = []
-    for a in range(2, target + 1):
-        if a * a > target:
-            break
-        if target % a == 0:
-            b = target // a
-            if passes(a, b, target):
-                pairs.append((a, b))
-    return pairs
-
-
-def unique_targets(max_bits: int = MAX_BITS) -> list[int]:
-    """Targets with exactly one answer that fits the register.
-
-    These are the safe ones to put on a button. Everything else either has
-    no answer (a prime) or several (12 is 2x6 and 3x4), and both of those
-    change how many rounds Grover needs.
-    """
-    biggest = 2 ** max_bits - 1
+def playable_targets(max_qubits: int = MAX_QUBITS) -> list[int]:
+    """Semiprimes whose two registers fit inside `max_qubits` qubits."""
     good = []
-    for target in range(4, biggest * biggest + 1):
-        if len(factor_pairs(target)) != 1:
-            continue
-        if bits_for(target) > max_bits:
-            continue
-        good.append(target)
+    target = 4
+    while True:
+        if qubit_count(target) > max_qubits:
+            break
+        if factor_pair(target) is not None:
+            good.append(target)
+        target += 1
     return good
 
 
-def nearest_unique_target(wanted: int, max_bits: int = MAX_BITS) -> int:
-    """Closest target to `wanted` that has exactly one answer."""
-    best = None
-    for target in unique_targets(max_bits):
-        if best is None or abs(target - wanted) < abs(best - wanted):
+def nearest_playable_target(wanted: int, max_qubits: int = MAX_QUBITS) -> int:
+    choices = playable_targets(max_qubits)
+    if not choices:
+        raise ValueError(f"no playable target fits in {max_qubits} qubits")
+
+    best = choices[0]
+    for target in choices:
+        if abs(target - wanted) < abs(best - wanted):
             best = target
     return best
 
 
 if __name__ == "__main__":
-    print("targets with exactly one answer:")
-    print(" ", unique_targets())
-    for wanted in (13, 17, 12, 50):
-        print(f"  {wanted} -> {nearest_unique_target(wanted)}")
+    print(f"semiprimes playable in {MAX_QUBITS} qubits or fewer:")
+    print("target  answer    a bits  b bits  qubits  labels")
+    for target in playable_targets():
+        a, b = factor_pair(target)
+        a_bits, b_bits = register_bits(target)
+        total = a_bits + b_bits
+        print(f"{target:>6}  {a:>2} x {b:<3}  {a_bits:>6}  {b_bits:>6}"
+              f"  {total:>6}  {2 ** total:>6}")
+
+    print()
+    for wanted in (13, 17, 12, 50, 200):
+        print(f"  {wanted} -> {nearest_playable_target(wanted)}")

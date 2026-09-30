@@ -6,7 +6,7 @@ into gates, which is the thing a quantum compiler does.
 import numpy as np
 import cirq
 
-from targets import bits_for, label_text, passes, split_label
+from targets import label_text, passes, qubit_count, register_bits, split_label
 
 
 def build_oracle_gate(target: int) -> cirq.MatrixGate:
@@ -17,11 +17,9 @@ def build_oracle_gate(target: int) -> cirq.MatrixGate:
     builds this out of the multiplier's own gates and never enumerates. This
     is a simulator shortcut so we can watch it work.
     """
-    bits = bits_for(target)
-
     signs = []
-    for label in range(2 ** (bits * 2)):
-        a, b = split_label(label, bits)
+    for label in range(2 ** qubit_count(target)):
+        a, b = split_label(label, target)
         if passes(a, b, target):
             signs.append(-1)
         else:
@@ -31,8 +29,7 @@ def build_oracle_gate(target: int) -> cirq.MatrixGate:
 
 
 def build_circuit(target: int) -> tuple[cirq.Circuit, tuple[cirq.Qid, ...]]:
-    bits = bits_for(target)
-    qubits = cirq.LineQubit.range(bits * 2)
+    qubits = cirq.LineQubit.range(qubit_count(target))
 
     circuit = cirq.Circuit()
     for qubit in qubits:
@@ -43,9 +40,9 @@ def build_circuit(target: int) -> tuple[cirq.Circuit, tuple[cirq.Qid, ...]]:
 
 
 def report(target: int) -> None:
-    bits = bits_for(target)
-    print(f"target {target}: {bits} bits each, {bits * 2} qubits, "
-          f"{2 ** (bits * 2)} labels")
+    a_bits, b_bits = register_bits(target)
+    print(f"target {target}: register a is {a_bits} bits, b is {b_bits} bits, "
+          f"{qubit_count(target)} qubits, {2 ** qubit_count(target)} labels")
 
     circuit, qubits = build_circuit(target)
 
@@ -55,8 +52,8 @@ def report(target: int) -> None:
     for label in range(len(state)):
         if state[label].real < 0:
             winners.append(label)
-            a, b = split_label(label, bits)
-            print(f"  negative at {label_text(label, bits)}  ->  a={a}, b={b}")
+            a, b = split_label(label, target)
+            print(f"  negative at {label_text(label, target)}  ->  a={a}, b={b}")
 
     # Measuring can't see those minus signs, so summarise rather than dump
     # all the counts: the winner should be getting an ordinary share.
