@@ -1,3 +1,24 @@
+// Which commit the deployed site was built from. Written by tools/build_site.mjs.
+// Makes "did production actually update?" a thing you can read off the page.
+(function () {
+  document.addEventListener("DOMContentLoaded", () => {
+    const slot = document.getElementById("build-stamp");
+    if (!slot) return;
+
+    fetch("build-info.json", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((info) => {
+        if (!info) return;
+        const when = new Date(info.builtAt).toLocaleString();
+        slot.textContent = "build " + info.commit + " · " + when;
+      })
+      .catch(() => {
+        /* opened straight off disk, so there's no build to stamp. fine. */
+      });
+  });
+})();
+
+
 // Theme toggle. Runs before paint (this script is in <head>) so there's no
 // white flash before a dark page settles. Dark is the default.
 (function () {

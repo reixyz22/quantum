@@ -1,0 +1,8 @@
+{
+  "name": "grover-one-door-at-a-time",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build_site.mjs"
+  }
+}
