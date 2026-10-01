@@ -287,12 +287,6 @@ winner's chance went from 12.5% to 78.3%</pre>
       </div>`,
   },
   {
-    num: "09",
-    title: "A real compiled oracle: the checker in gates",
-    file: "ch09_compiled_checker.py",
-    status: "locked",
-  },
-  {
     num: "07",
     title: "Grover: repeat, and know when to stop",
     file: "ch07_grover.py",
@@ -302,6 +296,12 @@ winner's chance went from 12.5% to 78.3%</pre>
     num: "08",
     title: "On real hardware: Superstaq and Sqale",
     file: "ch08_hardware.py",
+    status: "locked",
+  },
+  {
+    num: "09",
+    title: "A real compiled oracle: the checker in gates",
+    file: "ch09_compiled_checker.py",
     status: "locked",
   },
   {
