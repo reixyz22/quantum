@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grover Demo</title>
+  <meta name="description" content="Factor a small RSA-shaped number with Grover's algorithm, one step at a time. Every bar is a Cirq state vector amplitude.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="demo.css">
+  <script src="shared.js"></script>
+</head>
+<body class="demo-page">
+  <div class="demo-wrap">
+    <header class="top">
+      <nav>
+        <a href="index.html">Chapters</a>
+        <a href="flashcards.html">Flashcards</a>
+        <a href="demo.html" class="nav-demo" aria-current="page">Demo</a>
+      </nav>
+      <div class="size-controls" aria-label="Display">
+        <button id="sound-toggle" aria-label="Turn sound off" aria-pressed="true">🔊</button>
+        <button data-theme-toggle aria-label="Switch theme">☾</button>
+        <button data-size="-1" aria-label="Smaller text">A−</button>
+        <button data-size="1" aria-label="Larger text">A+</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Grover's algorithm, running on Cirq</p>
+        <h1>Factor a number by searching for it</h1>
+        <p class="lede">Pick a card. Each one is two primes multiplied together, the same shape as an
+        RSA key. Then watch one amplitude out of <span id="hero-n">32</span> climb until measuring it
+        hands you the factors.</p>
+      </div>
+      <div class="stat" aria-live="polite">
+        <span class="stat-label">Chance of reading the answer</span>
+        <span class="stat-value" id="stat-value">3.1%</span>
+        <span class="stat-sub" id="stat-sub">a blind guess is 1 in 32</span>
+      </div>
+    </section>
+
+    <div class="hand" id="hand" role="radiogroup" aria-label="Pick a number to factor"></div>
+
+    <section class="stage">
+      <div class="panel chart-panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Amplitude on every label</h2>
+            <p class="panel-sub" id="chart-sub">32 labels, one bar each. Above the line is positive, below is negative.</p>
+          </div>
+          <ul class="legend" aria-label="Legend">
+            <li><span class="swatch swatch-orange"></span>the answer</li>
+            <li><span class="swatch swatch-blue"></span>every other label</li>
+          </ul>
+        </div>
+        <div class="chart-box">
+          <svg id="bars" role="img" aria-labelledby="bars-desc"><desc id="bars-desc">Bar chart of the amplitude on every label.</desc></svg>
+          <div class="tip" id="bar-tip" hidden></div>
+        </div>
+        <p class="peek-note">This is a <b>sci-fi peek</b>. Real hardware can't show you amplitudes, measuring
+        wipes them out. I'm coloring the answer orange so you can follow it; the computer has no idea which
+        bar it is, the oracle just checks a rule.</p>
+
+        <div class="transport" role="group" aria-label="Playback">
+          <button class="t-btn" id="btn-reset" aria-label="Reset to the start" title="Reset (R)">⟲</button>
+          <button class="t-btn" id="btn-back" aria-label="Step back" title="Back (←)">◀</button>
+          <button class="t-btn t-play" id="btn-play" aria-label="Play" title="Play / pause (space)">▶ Play</button>
+          <button class="t-btn" id="btn-step" aria-label="Step forward" title="Step (→)">Step ▶</button>
+          <div class="speed" role="group" aria-label="Speed">
+            <button data-speed="0.5">0.5×</button>
+            <button data-speed="1" aria-pressed="true">1×</button>
+            <button data-speed="2">2×</button>
+          </div>
+          <div class="where" id="where">start</div>
+        </div>
+
+        <div class="narration" aria-live="polite">
+          <h3 id="nar-title">Every qubit starts at 0</h3>
+          <p id="nar-body"></p>
+        </div>
+
+        <details class="table-view">
+          <summary>Table view of every amplitude</summary>
+          <div class="table-scroll"><table id="amp-table"></table></div>
+        </details>
+      </div>
+
+      <aside class="side">
+        <div class="panel tutor">
+          <div class="panel-head">
+            <h2 class="panel-title">The code, line by line</h2>
+          </div>
+          <ol class="code" id="code"></ol>
+        </div>
+
+        <div class="panel frames">
+          <div class="panel-head">
+            <h2 class="panel-title">Variables</h2>
+          </div>
+          <dl class="vars" id="vars"></dl>
+          <div class="list-obj">
+            <div class="list-head"><code>state</code> <span id="list-len">list[32]</span></div>
+            <div class="cells" id="cells"></div>
+          </div>
+          <dl class="vars peek" id="peek"></dl>
+        </div>
+      </aside>
+    </section>
+
+    <section class="lower">
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">Chance of the answer, by round</h2>
+        </div>
+        <div class="chart-box"><svg id="curve" role="img" aria-label="Line chart of the answer's chance after each round"></svg>
+          <div class="tip" id="curve-tip" hidden></div></div>
+        <p class="hint">The dashed line is the planned stop, worked out before running. Go past it and watch what happens.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2 class="panel-title">The same thing, as an angle</h2>
+        </div>
+        <div class="angle-box"><svg id="angle" role="img" aria-label="The state drawn as an arrow turning toward the answer"></svg></div>
+        <p class="hint" id="angle-note">Each round turns the arrow by the same small angle.</p>
+      </div>
+
+      <div class="panel measure">
+        <div class="panel-head">
+          <h2 class="panel-title">Measure</h2>
+        </div>
+        <p class="hint" id="measure-hint">Measuring gives one label at random, weighted by those chances. Try it now, or wait for the sweet spot.</p>
+        <button class="measure-btn" id="btn-measure">Measure</button>
+        <button class="keep-btn" id="btn-keep" hidden>Keep going past it →</button>
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="notes">
+      <article class="panel note">
+        <h2 class="panel-title">What Grover actually buys you</h2>
+        <p>The pop-science version says a quantum computer tries every answer at once. If that were true,
+        this would take one step. It doesn't. It takes about <b>π/4 · √N</b> rounds: a <b>square-root
+        speedup</b>. Not O(1), not exponential. Quadratic.</p>
+        <table class="compare" id="compare"></table>
+      </article>
+
+      <article class="panel note">
+        <h2 class="panel-title">From these cards to real RSA</h2>
+        <p>Every card is a semiprime made of two <i>different</i> primes, the same shape as an RSA key:
+        multiplying is easy, undoing it is hard. Squares like 9 = 3 × 3 work here too, but RSA always uses
+        two different primes, so the hand sticks to those.</p>
+        <p><b>Scale check.</b> The biggest card is 35, a 6-bit number, run on 8 qubits. A real RSA key is
+        2048 bits, about 617 digits long.</p>
+        <p>Grover isn't actually how you'd go after RSA. Even with the square-root speedup, a 2048-bit key
+        would still need on the order of 2<sup>512</sup> rounds. The real threat is <b>Shor's algorithm</b>,
+        which factors exponentially faster. Estimates for breaking RSA-2048 with it have dropped from about
+        20 million noisy qubits (Gidney and Ekerå, 2019) to under a million (Gidney, 2025). The hardware
+        isn't there yet, but the target keeps moving closer, which is why post-quantum cryptography is
+        already rolling out.</p>
+      </article>
+
+      <article class="panel note">
+        <h2 class="panel-title">What's actually real on this page</h2>
+        <p><b>Every bar is a number Cirq computed.</b> <code>tools/export_demo.py</code> builds the real
+        circuit, steps through it moment by moment, and saves each state vector. This page only draws them.</p>
+        <p>The oracle checks the rule <code>a × b == target</code>. The factors are never written down
+        anywhere.</p>
+        <p>One honest caveat: to build that oracle, the simulator asks the rule about every label, which is
+        brute force. A real oracle would be a multiplier built out of gates that never enumerates anything.
+        That's the one I'm building next.</p>
+      </article>
+    </section>
+
+    <p class="keys hint">Keys: <kbd>space</kbd> play / pause · <kbd>→</kbd> step · <kbd>←</kbd> back ·
+    <kbd>R</kbd> reset · <kbd>M</kbd> measure</p>
+
+    <footer class="stamp" id="build-stamp"></footer>
+  </div>
+
+  <script src="data/demo.js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>

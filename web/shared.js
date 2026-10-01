@@ -53,7 +53,7 @@
   const MIN = 14, MAX = 34, STEP = 2;
 
   function read() {
-    try { return parseInt(localStorage.getItem(KEY), 10) || 20; } catch { return 20; }
+    try { return parseInt(localStorage.getItem(KEY), 10) || 17; } catch { return 17; }
   }
   function apply(px) {
     document.documentElement.style.setProperty("--font-size", px + "px");

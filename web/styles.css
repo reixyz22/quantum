@@ -1,29 +1,70 @@
-/* Dark is the default: this gets read late at night. Light is opt-in via the
-   header toggle, which sets data-theme="light" on <html>. */
+/* Orange and blue on navy. Dark is the default; light is opt-in via the
+   header toggle, which sets data-theme="light" on <html>.
+
+   Chart marks use --series-blue and --series-orange, which are slots 1 and 2
+   of the dataviz reference palette, validated against these exact surfaces
+   (CVD dE ~25, contrast >= 3:1). UI accents (links, buttons) are separate
+   tokens, each checked for text contrast on its own. */
+
 :root {
   color-scheme: dark;
-  --bg: #15140f;
-  --surface: #1e1c17;
-  --text: #ddd9cf;      /* not pure white; pure white on near-black glares */
-  --muted: #99958b;
-  --line: #302d26;
-  --accent: #9db4ea;
-  --accent-soft: #22293a;
-  --good: #74c79b;
-  --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
-  --font-size: 20px;
+
+  --bg: #0b1020;
+  --surface: #111a2e;
+  --surface-2: #17223b;
+  --text: #e8edf7;
+  --text-2: #b4bfd4;
+  --muted: #8592ab;
+  --line: #22304b;
+  --axis: #3a4866;
+
+  --series-blue: #3987e5;
+  --series-orange: #d95926;
+
+  --link: #8cbcff;
+  --primary: #ff8a4c;
+  --primary-ink: #1a0d05;
+  --good: #3ddc84;
+
+  --blue-wash: rgba(57, 135, 229, 0.14);
+  --orange-wash: rgba(255, 138, 76, 0.14);
+  --orange-glow: rgba(255, 138, 76, 0.45);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 32px rgba(0, 0, 0, 0.35);
+
+  /* older names, kept so existing rules keep working */
+  --accent: var(--link);
+  --accent-soft: var(--blue-wash);
+
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-size: 17px;
+  --radius: 14px;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #fbfaf7;
+
+  --bg: #f4f6fb;
   --surface: #ffffff;
-  --text: #1c1b19;
-  --muted: #5f5c55;
-  --line: #e3e0d8;
-  --accent: #2b59c3;
-  --accent-soft: #e6ecfa;
-  --good: #1f7a4d;
+  --surface-2: #f8f9fd;
+  --text: #141a2b;
+  --text-2: #45506a;
+  --muted: #66708a;
+  --line: #e6eaf3;
+  --axis: #c3cad8;
+
+  --series-blue: #2a78d6;
+  --series-orange: #eb6834;
+
+  --link: #1f5fb8;
+  --primary: #b8471a;
+  --primary-ink: #ffffff;
+  --good: #006300;
+
+  --blue-wash: rgba(42, 120, 214, 0.09);
+  --orange-wash: rgba(235, 104, 52, 0.10);
+  --orange-glow: rgba(235, 104, 52, 0.35);
+  --shadow: 0 1px 2px rgba(20, 26, 43, 0.05), 0 10px 28px rgba(20, 26, 43, 0.08);
 }
 
 * { box-sizing: border-box; }
@@ -32,14 +73,22 @@ html { font-size: var(--font-size); }
 
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  line-height: 1.55;
+  font-family: var(--sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(1100px 560px at 8% -12%, var(--blue-wash), transparent 62%),
+    radial-gradient(900px 520px at 108% 4%, var(--orange-wash), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
+a { color: var(--link); }
+
 .wrap {
-  max-width: 44rem;
+  max-width: 46rem;
   margin: 0 auto;
   padding-inline: 1rem;
   padding-block: 1rem 4rem;
@@ -51,81 +100,124 @@ header.top {
   gap: 0.5rem;
   align-items: center;
   justify-content: space-between;
-  padding-block: 0.5rem;
+  padding-block: 0.6rem;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
+nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
 nav a {
-  color: var(--accent);
+  color: var(--text-2);
   text-decoration: none;
-  margin-right: 1rem;
   font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  transition: background 150ms, color 150ms;
 }
-nav a[aria-current="page"] { color: var(--text); }
+nav a:hover { color: var(--text); background: var(--surface-2); }
+nav a[aria-current="page"] {
+  color: var(--text);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+nav a.nav-demo { color: var(--primary); }
+nav a.nav-demo[aria-current="page"] { color: var(--text); }
+
+.size-controls { display: flex; gap: 0.35rem; }
 
 .size-controls button {
   font: inherit;
   font-size: 0.85rem;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
+  min-width: 2.6rem;
+  min-height: 2.6rem;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   cursor: pointer;
+  transition: border-color 150ms, background 150ms;
 }
+.size-controls button:hover { border-color: var(--axis); background: var(--surface-2); }
 
-h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.5rem; }
-h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
-p.lede { color: var(--muted); margin-top: 0; }
+h1 {
+  font-size: 1.85rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+h2 { font-size: 1.2rem; letter-spacing: -0.01em; margin: 1.6rem 0 0.5rem; }
+p.lede { color: var(--text-2); margin-top: 0; }
 
 code, .mono {
   font-family: var(--mono);
-  font-size: 0.92em;
-  background: var(--accent-soft);
-  padding: 0.05em 0.3em;
-  border-radius: 0.25em;
+  font-size: 0.88em;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.05em 0.35em;
+  border-radius: 0.35em;
 }
 
 pre {
   font-family: var(--mono);
-  font-size: 0.85rem;
-  background: var(--surface);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  background: var(--surface-2);
   border: 1px solid var(--line);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
+  border-radius: 0.6rem;
+  padding: 0.8rem 0.95rem;
   overflow-x: auto;
 }
+pre code { background: none; border: 0; padding: 0; }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  margin: 0.75rem 0;
+}
+th, td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
 
 /* Chapters */
 .chapter {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   margin-bottom: 0.75rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 .chapter > summary {
   cursor: pointer;
-  padding: 1rem;
+  padding: 1rem 1.1rem;
   font-weight: 700;
   list-style: none;
   display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-items: baseline;
+  transition: background 150ms;
 }
+.chapter > summary:hover { background: var(--surface-2); }
 .chapter > summary::-webkit-details-marker { display: none; }
-.chapter .num { color: var(--muted); font-family: var(--mono); font-weight: 400; }
+.chapter .num { color: var(--muted); font-family: var(--mono); font-weight: 500; }
 .chapter .status { margin-left: auto; font-weight: 400; }
-.chapter .body { padding: 0 1rem 1rem; }
-.chapter.locked > summary { color: var(--muted); cursor: default; }
+.chapter .body { padding: 0 1.1rem 1.1rem; border-top: 1px solid var(--line); }
+.chapter.locked > summary { color: var(--muted); }
 .chapter ol li { margin-bottom: 0.5rem; }
 
 .check {
-  border-left: 4px solid var(--accent);
-  padding: 0.5rem 0.75rem;
-  background: var(--accent-soft);
-  border-radius: 0 0.5rem 0.5rem 0;
+  border-left: 3px solid var(--primary);
+  padding: 0.65rem 0.9rem;
+  background: var(--orange-wash);
+  border-radius: 0 0.6rem 0.6rem 0;
+  margin-top: 1.25rem;
 }
 .check summary { cursor: pointer; font-weight: 600; margin-top: 0.5rem; }
 
@@ -134,8 +226,8 @@ pre {
 .chips button {
   font: inherit;
   font-size: 0.85rem;
-  padding: 0.5rem 0.9rem;
-  min-height: 2.75rem;
+  padding: 0.5rem 0.95rem;
+  min-height: 2.6rem;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--surface);
@@ -143,35 +235,39 @@ pre {
   cursor: pointer;
 }
 .chips button[aria-pressed="true"] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+  font-weight: 600;
 }
 
 .card {
   width: 100%;
   min-height: 14rem;
-  padding: 1.25rem;
+  padding: 1.4rem;
   font: inherit;
   text-align: left;
   color: var(--text);
   background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow);
   cursor: pointer;
   white-space: pre-line;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: border-color 200ms;
 }
 .card .side {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   color: var(--muted);
+  font-weight: 600;
 }
-.card.flipped { border-color: var(--good); }
-.card.flipped .side { color: var(--good); }
+.card.flipped { border-color: var(--series-blue); }
+.card.flipped .side { color: var(--link); }
 
 .controls {
   display: grid;
@@ -182,15 +278,20 @@ pre {
 .controls button {
   font: inherit;
   min-height: 3rem;
-  border-radius: 0.75rem;
+  border-radius: 0.8rem;
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
 }
-.controls button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.controls button.primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+  border-color: var(--primary);
+  font-weight: 600;
+}
 .progress { color: var(--muted); text-align: center; margin-top: 0.75rem; }
-.hint { color: var(--muted); font-size: 0.8rem; }
+.hint { color: var(--muted); font-size: 0.82rem; }
 
 footer.stamp {
   margin-top: 3rem;
@@ -198,14 +299,14 @@ footer.stamp {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
 }
 
 /* Roadmap: the whole arc at a glance, so the curriculum can be audited. */
 h2.roadmap-head {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   color: var(--muted);
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
@@ -215,28 +316,50 @@ ol.roadmap {
   list-style: none;
   margin: 0;
   padding: 0;
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
 li.road {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-items: baseline;
-  padding: 0.6rem 0.8rem;
+  padding: 0.7rem 1rem;
   border-top: 1px solid var(--line);
   cursor: pointer;
+  transition: background 150ms;
 }
-
 li.road:first-child { border-top: none; }
-li.road:hover { background: var(--accent-soft); }
+li.road:hover { background: var(--surface-2); }
 li.road.locked { opacity: 0.55; }
+li.road .num { font-family: var(--mono); color: var(--muted); min-width: 1.6rem; }
+li.road .status { margin-left: auto; }
 
 .road-main { display: flex; flex-direction: column; flex: 1; }
+.road-one { color: var(--muted); font-size: 0.82rem; margin-top: 0.15rem; }
 
-.road-one {
-  color: var(--muted);
-  font-size: 0.8rem;
-  margin-top: 0.15rem;
+.demo-callout {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  margin: 0 0 1.5rem;
+  background: linear-gradient(135deg, var(--orange-wash), var(--blue-wash));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: transform 180ms, border-color 180ms;
+}
+.demo-callout:hover { transform: translateY(-2px); border-color: var(--axis); }
+.demo-callout b { display: block; }
+.demo-callout span { color: var(--text-2); font-size: 0.9rem; }
+.demo-callout .go { margin-left: auto; font-size: 1.4rem; color: var(--primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }

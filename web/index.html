@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Grover, One Door at a Time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="shared.js"></script>
 </head>
@@ -13,6 +16,7 @@
       <nav>
         <a href="index.html" aria-current="page">Chapters</a>
         <a href="flashcards.html">Flashcards</a>
+        <a href="demo.html" class="nav-demo">Demo</a>
       </nav>
       <div class="size-controls" aria-label="Display">
         <button data-theme-toggle aria-label="Switch theme">☾</button>
@@ -23,6 +27,11 @@
 
     <h1>Grover, one door at a time</h1>
     <p class="lede">Building Grover's search algorithm in Cirq, one idea per chapter. Each chapter matches a Python file in the repo.</p>
+
+    <a class="demo-callout" href="demo.html">
+      <div><b>Try the demo</b><span>Factor an RSA-shaped number with Grover, one step at a time. Every bar is a Cirq amplitude.</span></div>
+      <span class="go" aria-hidden="true">→</span>
+    </a>
 
     <h2 class="roadmap-head">Roadmap</h2>
     <ol id="roadmap" class="roadmap"></ol>

@@ -16,7 +16,9 @@ ch05_compiling.py         exercise: build the oracle from gates (answer in _answ
 ch06_diffuser.py          exercise: write the diffuser (answer in _answer.py)
 appendix_entanglement.py  Bell state, off the critical path
 
-web/                      site source (chapters + flashcards)
+web/                      site source (chapters, flashcards, demo)
+tools/export_demo.py      runs Grover in Cirq, writes every frame to web/data/demo.js
+tools/check_demo.mjs      steps the demo through every frame headlessly; part of the build
 tools/build_site.mjs      assembles web/ into dist/ and stamps the commit
 dist/                     build output, gitignored, what Vercel serves
 ```
@@ -40,8 +42,14 @@ Plain HTML/CSS/JS with no framework and no dependencies. Content lives in
 `web/data/chapters.js` and `web/data/flashcards.js`.
 
 ```bash
-npm run build      # web/ -> dist/, plus dist/build-info.json
+python tools/export_demo.py   # rerun after changing targets.py or the oracle
+npm run build                 # smoke test, then web/ -> dist/ plus build-info.json
 ```
+
+The demo page draws, it never simulates. Every amplitude on it is a Cirq
+state vector value recorded by `export_demo.py`, so the browser can't
+disagree with the physics. `npm run build` runs `check_demo.mjs` first, so a
+demo that throws or prints `NaN` fails the deploy instead of shipping.
 
 - **Local, quick:** open `web/index.html` straight off disk. Everything works
   except the build stamp, which has no build to read.

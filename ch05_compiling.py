@@ -67,8 +67,6 @@ def oracle_from_gates(qubits, winner_bits: str) -> cirq.Circuit:
     return cir
 
 
-
-
 # ---------------------------------------------------------------------------
 # Written for you. You don't need to edit below this line.
 # ---------------------------------------------------------------------------
@@ -107,7 +105,7 @@ def run_checks(extra_target: int | None = None) -> None:
         return
 
     for winner_bits, want in [("11101", [3]), ("1010", [1, 3]), ("1111", []),
-                       ("0000", [0, 1, 2, 3])]:
+                              ("0000", [0, 1, 2, 3])]:
         got = positions_needing_x(winner_bits)
         if list(got) != want:
             print(f"positions_needing_x({winner_bits!r}) gave {got}, expected {want}")
