@@ -144,14 +144,26 @@ after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
   },
   {
     num: "05",
-    title: "From a matrix to gates a chip could run",
+    title: "Aiming one sign-flipping gate at one label",
     file: "ch05_compiling.py",
     status: "in progress",
     body: `
       <p><b>This chapter is an exercise.</b> Three blanks, same self-checking runner as
       chapter 6 &mdash; except this one also compares your gates against chapter 4's matrix
       and tells you whether they do the same job.</p>
-      <pre>python ch05_compiling.py</pre>
+      <pre>python ch05_compiling.py        # or pass a target: ... 21</pre>
+
+      <h2>Why the disguise</h2>
+      <p>The only sign-flipping gate we have is a controlled Z, and it fires on exactly one
+      pattern: <b>every qubit reading 1</b>. The winner for 15 is <code>11101</code>, not
+      <code>11111</code>. So X the qubits that should read 0, let the CZ fire, then X them
+      back. The X gates are a workaround for having one gate with a fixed trigger. Nothing
+      deeper than that.</p>
+
+      <h2>What this is NOT</h2>
+      <p>This does <b>not</b> translate the checker into gates. It aims a flip at a label we
+      already looked up, which is chapter 4's cheat wearing gates instead of a matrix. The
+      real thing is chapter 9.</p>
 
       <h2>The seam</h2>
       <pre>circuit.append(cirq.H(q0))                # a real gate. hardware has this.
@@ -204,12 +216,6 @@ target  21 (3 x 7), winner 0110111: 5 gates, depth 3 -> same operation
       because multiplying an <i>entire</i> state by &minus;1 changes no measurement, so two
       circuits differing only by that are the same operation.</p>
 
-      <h2>Still missing after this</h2>
-      <p>Your gates get laid out <b>from the known winner</b>, which is the chapter 4 cheat in
-      different clothing. A real compiled oracle is a multiplier plus a comparator, and
-      nothing in it knows what 3 or 5 are. Cirq can also do decomposition automatically
-      &mdash; feed the opaque matrix to <code>cirq.optimize_for_target_gateset</code> and watch
-      real gates fall out. That's the rest of this chapter.</p>
       <div class="check">
         <b>Check:</b> Why does a compiler care whether the oracle is a matrix or gates, if both simulate to the same answer?
         <details><summary>Answer</summary>Because it can only optimise what it can see inside. Gates can be decomposed to a chip's native set, reordered, routed around missing connections, and cancelled against neighbours. A matrix admits none of that.</details>
@@ -279,6 +285,12 @@ winner's chance went from 12.5% to 78.3%</pre>
         <b>Check:</b> After the oracle you have <code>[0.5, 0.5, &minus;0.5, 0.5]</code>. What's the average, and where does each amplitude land?
         <details><summary>Answer</summary>Average 0.25. Reflecting gives <code>[0, 0, 1, 0]</code> &mdash; the three losers sat just above the average so they drop to zero, and the winner sat far below it so it goes to 1.0. That's 100% on the winner after one round.</details>
       </div>`,
+  },
+  {
+    num: "09",
+    title: "A real compiled oracle: the checker in gates",
+    file: "ch09_compiled_checker.py",
+    status: "locked",
   },
   {
     num: "07",

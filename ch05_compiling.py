@@ -1,11 +1,20 @@
-"""Chapter 5: turn the oracle's matrix into gates a chip could run.
+"""Chapter 5: aim one sign-flipping gate at one label.
 
 Three blanks. Fill them in, run the file, and it tells you which one is next
-and whether your gates do the same job as the matrix.
+and whether your gates do the same job as chapter 4's matrix.
 
-The matrix from chapter 4 is a wish: it says WHAT should happen. A compiler's
-job is to say HOW, using only moves the hardware has. Here that means one
-controlled Z, plus X gates to point it at the right label.
+WHY THE DISGUISE. The only sign-flipping gate we have is a controlled Z, and
+it fires on exactly one pattern: every qubit reading 1. The winner for 15 is
+11101, not 11111. So we X the qubits that should read 0, let the CZ fire, and
+X them back. The X gates are a workaround for having one gate with a fixed
+trigger, nothing deeper than that.
+
+WHAT THIS IS NOT. This does not translate the checker into gates. It aims a
+flip at a label we already looked up, which is chapter 4's cheat wearing
+gates instead of a matrix. The real thing is a multiplier plus a comparator,
+where nothing in the circuit knows what 3 or 5 are. That is a later chapter.
+
+Pass a target on the command line: python ch05_compiling.py 21
 
 If you get stuck the worked version is in ch05_compiling_answer.py.
 """
@@ -21,22 +30,15 @@ from targets import factor_pair, label_text, qubit_count, register_bits
 # Your three blanks.
 # ---------------------------------------------------------------------------
 
-def positions_needing_x(text: str) -> list[int]:
-    """Which positions of `text` hold a "0"?
-
-    A controlled Z only fires when every qubit reads 1. So any qubit that is
-    supposed to read 0 in the winning label needs an X first, to disguise it
-    as a 1.
-
-    Given "11101" the answer is [3], because that is the only "0".
-    Given "1010" the answer is [1, 3].
-
-    Return a list of the index positions. Plain Python, no cirq.
-    """
-    raise NotImplementedError("write me")
+def positions_needing_x(winner_bits: str) -> list[int]:
+    zeros = []
+    for index, item in enumerate(winner_bits):
+        if item == '0':
+            zeros.append(index)
+    return zeros
 
 
-def disguise(qubits, text: str) -> list[cirq.Operation]:
+def disguise(qubits, winner_bits: str) -> list[cirq.Operation]:
     """One X gate on each qubit that needs disguising.
 
     Use positions_needing_x above to decide which. An X on a qubit is
@@ -45,10 +47,11 @@ def disguise(qubits, text: str) -> list[cirq.Operation]:
     Return a list of those X operations. Empty list is fine if there are no
     zeros in the label.
     """
-    raise NotImplementedError("write me")
+    zeros = positions_needing_x(winner_bits)
+    return [cirq.X(qubits[x]) for x in zeros]
 
 
-def oracle_from_gates(qubits, text: str) -> cirq.Circuit:
+def oracle_from_gates(qubits, winner_bits: str) -> cirq.Circuit:
     """Assemble the whole oracle: disguise, fire, undisguise.
 
     Three appends, in that order. The same disguise list works for putting
@@ -56,7 +59,12 @@ def oracle_from_gates(qubits, text: str) -> cirq.Circuit:
 
     controlled_z() below is written for you.
     """
-    raise NotImplementedError("write me")
+    disguise = cirq.Circuit(winner_bits)
+    controlled_z(disguise)
+    disguise = cirq.Circuit(winner_bits)
+    return qubits
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -89,18 +97,18 @@ def oracle_as_matrix(target: int) -> cirq.MatrixGate:
     return cirq.MatrixGate(np.diag(signs).astype(np.complex128))
 
 
-def run_checks() -> None:
+def run_checks(extra_target: int | None = None) -> None:
     try:
         positions_needing_x("11101")
     except NotImplementedError:
         print("positions_needing_x() is still blank. Start there.")
         return
 
-    for text, want in [("11101", [3]), ("1010", [1, 3]), ("1111", []),
+    for winner_bits, want in [("11101", [3]), ("1010", [1, 3]), ("1111", []),
                        ("0000", [0, 1, 2, 3])]:
-        got = positions_needing_x(text)
+        got = positions_needing_x(winner_bits)
         if list(got) != want:
-            print(f"positions_needing_x({text!r}) gave {got}, expected {want}")
+            print(f"positions_needing_x({winner_bits!r}) gave {got}, expected {want}")
             return
     print("positions_needing_x   ok")
 
@@ -130,13 +138,17 @@ def run_checks() -> None:
 
     print("oracle_from_gates     ok, now checking it against the matrix:")
     print()
-    for target in (4, 6, 15, 21):
+    targets = [4, 6, 15, 21]
+    if extra_target is not None and extra_target not in targets:
+        targets.append(extra_target)
+
+    for target in targets:
         n = qubit_count(target)
         wires = cirq.LineQubit.range(n)
-        text = winning_label(target)
+        winner_bits = winning_label(target)
 
         described = cirq.Circuit(oracle_as_matrix(target).on(*wires))
-        built = oracle_from_gates(wires, text)
+        built = oracle_from_gates(wires, winner_bits)
 
         same = cirq.allclose_up_to_global_phase(
             cirq.unitary(described), cirq.unitary(built)
@@ -144,7 +156,7 @@ def run_checks() -> None:
         a, b = factor_pair(target)
         gates = len(list(built.all_operations()))
         verdict = "same operation" if same else "DIFFERENT -- something is off"
-        print(f"  target {target:>3} ({a} x {b}), winner {text}: "
+        print(f"  target {target:>3} ({a} x {b}), winner {winner_bits}: "
               f"{gates} gates, depth {len(built)} -> {verdict}")
 
     print()
@@ -154,4 +166,9 @@ def run_checks() -> None:
 
 
 if __name__ == "__main__":
-    run_checks()
+    import sys
+
+    if len(sys.argv) > 1:
+        run_checks(int(sys.argv[1]))
+    else:
+        run_checks()

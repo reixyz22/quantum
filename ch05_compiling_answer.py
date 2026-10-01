@@ -45,11 +45,11 @@ def oracle_as_gates(target: int, qubits) -> cirq.Circuit:
     The controlled Z only fires when every qubit reads 1, so we X the qubits
     that are supposed to read 0, let it fire, then X them back.
     """
-    text = label_text(winning_label(target), target)
+    winner_bits = label_text(winning_label(target), target)
 
     disguise = []
-    for position in range(len(text)):
-        if text[position] == "0":
+    for position in range(len(winner_bits)):
+        if winner_bits[position] == "0":
             disguise.append(cirq.X(qubits[position]))
 
     controls = qubits[:-1]
