@@ -59,10 +59,12 @@ def oracle_from_gates(qubits, winner_bits: str) -> cirq.Circuit:
 
     controlled_z() below is written for you.
     """
-    disguise = cirq.Circuit(winner_bits)
-    controlled_z(disguise)
-    disguise = cirq.Circuit(winner_bits)
-    return qubits
+    cir = cirq.Circuit()
+
+    cir.append(disguise(qubits, winner_bits))
+    cir.append(controlled_z(qubits))
+    cir.append(disguise(qubits, winner_bits))
+    return cir
 
 
 
