@@ -1,6 +1,6 @@
 // Smoke test for the demo page, no browser needed.
 //
-// Loads web/data/demo.js and web/demo.js against a small fake DOM, steps
+// Loads web/data/demo.js, web/demo.js and web/layout.js against a small fake DOM, steps
 // through every frame of every card, measures at the sweet spot, and fails if
 // anything the page writes contains "undefined" or "NaN", or if any frame's
 // numbers disagree with what the exporter promised.
@@ -83,11 +83,14 @@ const ctx = {
   clearTimeout() {},
   performance,
   console,
+  dispatchEvent() {},
+  CustomEvent: class { constructor(type) { this.type = type; } },
 };
 ctx.window = ctx;
 vm.createContext(ctx);
 vm.runInContext(readFileSync("web/data/demo.js", "utf8"), ctx);
 vm.runInContext(readFileSync("web/demo.js", "utf8"), ctx);
+vm.runInContext(readFileSync("web/layout.js", "utf8"), ctx);
 
 const demo = ctx.__groverDemo;
 

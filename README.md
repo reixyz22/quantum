@@ -19,6 +19,7 @@ appendix_entanglement.py  Bell state, off the critical path
 web/                      site source (chapters, flashcards, demo)
 tools/export_demo.py      runs Grover in Cirq, writes every frame to web/data/demo.js
 tools/check_demo.mjs      steps the demo through every frame headlessly; part of the build
+docs/demo-backlog.md      what to add to the demo once chapters 6+ are rewritten
 tools/build_site.mjs      assembles web/ into dist/ and stamps the commit
 dist/                     build output, gitignored, what Vercel serves
 ```

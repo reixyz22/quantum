@@ -26,6 +26,8 @@
   function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
 
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const customLayout = () => document.getElementById("board").classList.contains("custom");
+  const escapeHtml = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const r2 = (v) => Math.round(v * 100) / 100;
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const wait = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -242,12 +244,13 @@
     clear(svg);
     if (desc) svg.appendChild(desc);
 
-    const W = Math.max(320, Math.round(svg.parentElement.clientWidth));
+    const box = svg.parentElement;
+    const W = Math.max(320, Math.round(box.clientWidth));
     const small = W < 640;
     const N = card.N;
     const labelRow = N <= 16 ? 26 : (N <= 32 && !small ? 50 : 0);
     const M = { l: small ? 44 : 56, r: 12, t: 46, b: 16 + labelRow };
-    const H = small ? 300 : 400;
+    const H = customLayout() ? Math.max(200, Math.round(box.clientHeight)) : (small ? 300 : 400);
     const PW = W - M.l - M.r;
     const PH = H - M.t - M.b;
     const y = (a) => M.t + (1 - a) / 2 * PH;
@@ -415,8 +418,9 @@
   function buildCurve() {
     const svg = $("curve");
     clear(svg);
-    const W = Math.max(260, Math.round(svg.parentElement.clientWidth));
-    const H = 220;
+    const box = svg.parentElement;
+    const W = Math.max(260, Math.round(box.clientWidth));
+    const H = customLayout() ? Math.max(140, Math.round(box.clientHeight)) : 220;
     const M = { l: 44, r: 16, t: 18, b: 34 };
     const PW = W - M.l - M.r;
     const PH = H - M.t - M.b;
@@ -1033,6 +1037,107 @@
       `<tbody>${rows.join("")}</tbody>`;
   }
 
+  // ------------------------------------------------------------ compilation
+  // How the target becomes a circuit, using the numbers export_demo.py got
+  // from Cirq: register sizing, chapter 5's gates, those gates lowered to CZ,
+  // and the SWAPs it takes to route them onto a chip shaped like a line.
+
+  const WORDS = ["No", "One", "Two", "Three", "Four"];
+  const thousands = (v) => v.toLocaleString("en-US");
+
+  function registerBoxes() {
+    const box = (from, count) => {
+      let cells = "";
+      for (let i = from; i < from + count; i++) cells += `<span class="q">q${i}</span>`;
+      return cells;
+    };
+    return `<div class="regs">` +
+      `<div class="reg a"><div class="qs">${box(0, card.aBits)}</div>` +
+      `<span class="cap">register a · holds up to ${2 ** card.aBits - 1}</span></div>` +
+      `<div class="reg b"><div class="qs">${box(card.aBits, card.bBits)}</div>` +
+      `<span class="cap">register b · holds up to ${2 ** card.bBits - 1}</span></div>` +
+      `</div>`;
+  }
+
+  function renderCompile() {
+    const c = card;
+    const k = c.compile;
+    const ours = k.ours;
+    const naive = k.naive;
+    const aRoot = k.isqrt.toString(2);
+    const bHalf = k.half.toString(2);
+    const t = String(c.target);
+
+    $("cmp-title").textContent = `Compiling ${c.target} into a circuit`;
+
+    const line1 = `a ≤ b, so a ≤ √${t}`.padEnd(24) + `isqrt(${t}) = ${k.isqrt}`.padEnd(16) +
+      `→ ${aRoot}`.padEnd(9) + `→ ${c.aBits} bits`;
+    const line2 = `a ≥ 2, so b ≤ ${t} ÷ 2`.padEnd(24) + `${t} // 2 = ${k.half}`.padEnd(16) +
+      `→ ${bHalf}`.padEnd(9) + `→ ${c.bBits} bits`;
+    const line3 = " ".repeat(40) + `${c.aBits} + ${c.bBits} = ${c.n} qubits, ${c.N} labels`;
+
+    $("cmp-steps").innerHTML =
+      `<li><h4>Size the registers from the target alone</h4>` +
+        `<pre class="calc">${escapeHtml([line1, line2, line3].join("\n"))}</pre>` +
+        registerBoxes() +
+        `<p>Both bounds come from ${c.target} itself, never from its factors. Sizing a register to fit the ` +
+        `real answer would leak how big the answer is. Sizing both for the biggest possible factor would ` +
+        `take ${naive.qubits} qubits and ${2 ** naive.qubits} labels.</p></li>` +
+
+      `<li><h4>Write the oracle as gates</h4>` +
+        `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
+        `<p>${ours.gates} gates, depth ${ours.depth}. X gates disguise the zeros, one controlled Z fires on ` +
+        `the answer, then the X gates take the disguise back off. This is the chapter 5 code I wrote. It's ` +
+        `aimed using the known answer, which is the cheat; the real version compiles the multiplier ` +
+        `instead.</p></li>` +
+
+      `<li><h4>Lower it to what the chip actually has</h4>` +
+        `<div class="figs">` +
+          `<div><b>${thousands(ours.nativeOps)}</b><span>native operations</span></div>` +
+          `<div><b>${thousands(ours.cz)}</b><span>two-qubit CZ gates</span></div>` +
+          `<div><b>${thousands(ours.nativeDepth)}</b><span>depth</span></div>` +
+        `</div>` +
+        `<p>No chip has a ${c.n}-qubit controlled Z. Cirq rewrites that one line into CZs and single-qubit ` +
+        `rotations. It does it without borrowing any spare qubits; with a few scratch qubits it gets much ` +
+        `cheaper, which is one of the tradeoffs a compiler gets to make.</p></li>` +
+
+      `<li><h4>Route it onto a chip</h4>` +
+        `<div class="figs">` +
+          `<div><b>+${thousands(ours.swaps)}</b><span>SWAPs inserted</span></div>` +
+          `<div><b>+${thousands(ours.swaps * 3)}</b><span>more two-qubit gates</span></div>` +
+        `</div>` +
+        `<p>Qubits can only interact with their neighbours. On a chip wired as a line, Cirq has to SWAP ` +
+        `them next to each other first, and every SWAP costs three more two-qubit gates. A line is close to ` +
+        `a worst case: neutral-atom machines like Infleqtion's are far better connected, and an atom can ` +
+        `sometimes be physically moved instead of SWAPped.</p></li>`;
+
+    const row = (label, a, b) =>
+      `<tr><td>${label}</td><td class="ours">${a}</td><td>${b}</td></tr>`;
+    $("cmp-table").innerHTML =
+      "<thead><tr><th></th><th>sized by bounds</th><th>both full size</th></tr></thead><tbody>" +
+      row("qubits", ours.qubits, naive.qubits) +
+      row("labels", thousands(2 ** ours.qubits), thousands(2 ** naive.qubits)) +
+      row("Grover rounds", ours.rounds, naive.rounds) +
+      row("CZ per oracle", thousands(ours.cz), thousands(naive.cz)) +
+      row("SWAPs per oracle", thousands(ours.swaps), thousands(naive.swaps)) +
+      row("CZ over the run", thousands(ours.cz * ours.rounds), thousands(naive.cz * naive.rounds)) +
+      "</tbody>";
+
+    const saved = naive.qubits - ours.qubits;
+    if (saved <= 0) {
+      $("cmp-why").textContent =
+        "On this card both registers are already as small as they go, so there's nothing to save. " +
+        "Try 15 or 35 to see the difference.";
+    } else {
+      const ratio = (naive.cz * naive.rounds) / (ours.cz * ours.rounds);
+      $("cmp-why").textContent =
+        `${WORDS[saved] || saved} ${saved === 1 ? "qubit" : "qubits"} saved, and about ` +
+        `${ratio.toFixed(ratio < 3 ? 1 : 0)}× fewer two-qubit gates over the whole run. Two-qubit gates are ` +
+        `where most of the error comes from, so fewer of them is a better chance the answer survives. ` +
+        `Counts are for the oracle on its own.`;
+    }
+  }
+
   // ------------------------------------------------------------- assembly
 
   function rebuild() {
@@ -1046,6 +1151,7 @@
     buildAngle();
     renderCode();
     renderCompare();
+    renderCompile();
     drawBars(drawn);
     showAverage(false);
     updateLive(drawn);
@@ -1108,11 +1214,24 @@
       else if (e.key === "m" || e.key === "M") measure();
     });
 
+    // Charts redraw whenever their own box changes size: a window resize, or a
+    // panel being dragged bigger in the arrange view.
     let pending = 0;
-    window.addEventListener("resize", () => {
-      clearTimeout(pending);
-      pending = setTimeout(redrawOnly, 150);
-    });
+    const seen = new Map();
+    const later = () => { clearTimeout(pending); pending = setTimeout(redrawOnly, 120); };
+    if (window.ResizeObserver) {
+      const watcher = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const box = entry.contentRect;
+          const key = Math.round(box.width) + "x" + Math.round(box.height);
+          if (seen.get(entry.target) !== key) { seen.set(entry.target, key); later(); }
+        }
+      });
+      ["bars-box", "curve-box"].forEach((id) => watcher.observe($(id)));
+    } else {
+      window.addEventListener("resize", later);
+    }
+    window.addEventListener("demo-layout", later);
 
     wireBarHover();
     wireCurveHover();
