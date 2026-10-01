@@ -24,19 +24,44 @@
     <h1>Grover, one door at a time</h1>
     <p class="lede">Building Grover's search algorithm in Cirq, one idea per chapter. Each chapter matches a Python file in the repo.</p>
 
+    <h2 class="roadmap-head">Roadmap</h2>
+    <ol id="roadmap" class="roadmap"></ol>
+
+    <h2 class="roadmap-head">Chapters</h2>
     <div id="chapters"></div>
     <footer class="stamp" id="build-stamp"></footer>
   </div>
 
   <script src="data/chapters.js"></script>
   <script>
+    const ICON = { done: "⭐", locked: "🔒" };
+    const icon = (st) => ICON[st] || "✏️";
+
+    const map = document.getElementById("roadmap");
+    for (const ch of window.CHAPTERS) {
+      const li = document.createElement("li");
+      li.className = "road " + ch.status.replace(" ", "-");
+      li.innerHTML =
+        `<span class="num">${ch.num}</span>` +
+        `<span class="road-main"><b>${ch.title}</b>` +
+        `<span class="road-one">${ch.oneLine || ""}</span></span>` +
+        `<span class="status">${icon(ch.status)}</span>`;
+      li.addEventListener("click", () => {
+        const d = document.getElementById("ch-" + ch.num);
+        if (!d) return;
+        d.open = true;
+        d.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      map.appendChild(li);
+    }
+
     const root = document.getElementById("chapters");
     for (const ch of window.CHAPTERS) {
       const d = document.createElement("details");
       d.className = "chapter" + (ch.status === "locked" ? " locked" : "");
+      d.id = "ch-" + ch.num;
       const s = document.createElement("summary");
-      const icon = ch.status === "done" ? "⭐" : ch.status === "locked" ? "🔒" : "✏️";
-      s.innerHTML = `<span class="num">${ch.num}</span><span>${ch.title}</span><span class="status">${icon}</span>`;
+      s.innerHTML = `<span class="num">${ch.num}</span><span>${ch.title}</span><span class="status">${icon(ch.status)}</span>`;
       d.appendChild(s);
       if (ch.body) {
         const b = document.createElement("div");

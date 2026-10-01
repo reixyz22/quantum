@@ -200,3 +200,43 @@ footer.stamp {
   font-family: var(--mono);
   font-size: 0.65rem;
 }
+
+/* Roadmap: the whole arc at a glance, so the curriculum can be audited. */
+h2.roadmap-head {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+ol.roadmap {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+li.road {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0.8rem;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+
+li.road:first-child { border-top: none; }
+li.road:hover { background: var(--accent-soft); }
+li.road.locked { opacity: 0.55; }
+
+.road-main { display: flex; flex-direction: column; flex: 1; }
+
+.road-one {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 0.15rem;
+}
