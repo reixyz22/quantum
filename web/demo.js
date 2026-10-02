@@ -1121,7 +1121,8 @@
         `so Cirq is lowering a marker rather than a multiplier. A real oracle takes the whole superposition ` +
         `and checks <code>a &times; b == ${c.target}</code> against every label at once, which is the ` +
         `version chapter 9 builds. That difference is why the gate counts here are a floor, not a ` +
-        `forecast.</p>` +
+        `forecast. I had this the wrong way round until an interviewer walked me through it, and it is ` +
+        `the moment the whole algorithm clicked.</p>` +
         `<ol class="steps-inner">` +
         `<li><h4>The oracle as gates</h4>` +
           `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
