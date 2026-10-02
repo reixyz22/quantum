@@ -56,7 +56,7 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
       <p>So <b>n qubits give 2<sup>n</sup> labels</b>, not n&sup2;. Qubits double the list; they don't square it. That operation is called the <b>tensor product</b>.</p>
 
       <h2>The even split, and the one formula to keep</h2>
-      <p>One H on every qubit puts the same amplitude on every label. Work it out chances-first and it never gets slippery:</p>
+      <p>One H on every qubit puts the same amplitude on every label. Work it out chances-first and it never gets confusing:</p>
       <ol>
         <li><b>Count the labels.</b> 4 qubits &rarr; N = 2&#8308; = 16.</li>
         <li><b>Split the chance evenly.</b> Chances must total 1, so each is 1/16 = 0.0625.</li>
@@ -72,7 +72,7 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
       <p>Amplitudes never add to 1. <b>Chances do</b>. The amplitudes actually sum to &radic;N, which is the same &radic;N that shows up in the speedup.</p>
 
       <h2>Why this matters twice</h2>
-      <p>This even split is Grover's starting line: nothing is favoured, because we don't know anything yet. And it's also the ceiling on simulation: 50 qubits means tracking about a quadrillion numbers, which is why real hardware exists.</p>
+      <p>This even split is Grover's starting line: nothing is favored, because we don't know anything yet. And it's also the ceiling on simulation: 50 qubits means tracking about a quadrillion numbers, which is why real hardware exists.</p>
       <p>All n of those H gates run in a single Moment, so this costs depth 1 no matter how many qubits.</p>
       <div class="check">
         <b>Check:</b> 6 qubits. How many labels, what chance on each, what amplitude on each?
@@ -92,7 +92,7 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
           │
 2: ───H───@───</pre>
       <h2>The one new gate</h2>
-      <p>That <code>@</code> column is a <b>controlled Z</b>. <code>@</code> is the ASCII stand-in for the filled dot textbooks draw, and it means "this qubit is a control". The vertical line is the wiring. It's drawn as wiring rather than labelled <code>CZ</code> because the gate spans three rows and a label only fits on one.</p>
+      <p>That <code>@</code> column is a <b>controlled Z</b>. <code>@</code> is the ASCII stand-in for the filled dot textbooks draw, and it means "this qubit is a control". The vertical line is the wiring. It's drawn as wiring rather than labeled <code>CZ</code> because the gate spans three rows and a label only fits on one.</p>
       <p><b>Why all-1s?</b> It is the gate's definition, but the definition mirrors the
       physics. On neutral atoms the two-qubit interaction comes from the <b>Rydberg
       blockade</b>, which only kicks in when the atoms are excited, so "fires when both
@@ -171,9 +171,9 @@ after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
       back. The X gates are a workaround for having one gate with a fixed trigger. Nothing
       deeper than that.</p>
 
-      <h2>What this is NOT</h2>
+      <h2>What this is not</h2>
       <p>This does <b>not</b> translate the checker into gates. It aims a flip at a label we
-      already looked up, which is chapter 4's cheat wearing gates instead of a matrix. The
+      already looked up, which is chapter 4's shortcut wearing gates instead of a matrix. The
       real thing is chapter 9.</p>
 
       <h2>The seam</h2>
@@ -385,7 +385,7 @@ winner's chance went from 12.5% to 78.3%</pre>
     status: "locked",
     body: `
       <p class="hint">Not written yet, and deliberately last. This is the big one.</p>
-      <h2>What every earlier oracle cheated at</h2>
+      <h2>The shortcut every earlier oracle takes</h2>
       <p>Chapters 4 and 5 both look the answer up first. One builds a matrix from it, the
       other aims a gate at it. Neither compiles the checker. This chapter does.</p>
       <h2>The plan</h2>

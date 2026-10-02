@@ -1094,7 +1094,7 @@
         `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
         `<p>${ours.gates} gates, depth ${ours.depth}. X gates disguise the zeros, one controlled Z fires on ` +
         `the answer, then the X gates take the disguise back off. This is the chapter 5 code I wrote. It's ` +
-        `aimed using the known answer, which is the cheat; the real version compiles the multiplier ` +
+        `aimed using the known answer, which is the shortcut; the real version compiles the multiplier ` +
         `instead.</p></li>` +
 
       `<li><h4>Lower it to what the chip actually has</h4>` +
