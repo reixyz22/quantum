@@ -1115,14 +1115,18 @@
         `${c.aBits} bits instead of ${naiveBits}. Compilers call this bitwidth analysis.</p>` +
       `</div>` +
 
-      `<details class="after">` +
-        `<summary>What Cirq does with the circuit after that</summary>` +
+      `<details class="after" open>` +
+        `<summary>What Cirq does with the circuit after that, in our version</summary>` +
+        `<p class="caveat">Worth saying plainly: the oracle below is aimed at the label we already know, ` +
+        `so Cirq is lowering a marker rather than a multiplier. A real oracle takes the whole superposition ` +
+        `and checks <code>a &times; b == ${c.target}</code> against every label at once, which is the ` +
+        `version chapter 9 builds. That difference is why the gate counts here are a floor, not a ` +
+        `forecast.</p>` +
         `<ol class="steps-inner">` +
         `<li><h4>The oracle as gates</h4>` +
           `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
           `<p>${ours.gates} gates, depth ${ours.depth}. The X gates disguise the zeros so one controlled Z ` +
-          `fires on exactly one label, then take the disguise back off. Chapter 9 replaces the marked label ` +
-          `with a multiplier that computes the rule.</p></li>` +
+          `fires on exactly one label, then take the disguise back off.</p></li>` +
         `<li><h4>Lowered to native gates</h4>` +
           `<div class="figs">` +
             `<div><b>${thousands(ours.nativeOps)}</b><span>native operations</span></div>` +

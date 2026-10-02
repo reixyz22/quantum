@@ -910,3 +910,13 @@ kbd {
 .steps-inner { margin: 0.8rem 0 0; padding-left: 1.2rem; display: grid; gap: 1rem; }
 .steps-inner h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
 .steps-inner p { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-2); }
+
+.caveat {
+  margin: 0.7rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid var(--axis);
+  border-radius: 0 0.4rem 0.4rem 0;
+  background: var(--surface-2);
+  font-size: 0.85rem;
+  color: var(--text-2);
+}
