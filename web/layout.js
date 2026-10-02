@@ -32,6 +32,9 @@
   let topZ = 10;
 
   function load() {
+    // A layout saved while authoring must never decide what a visitor sees, so it
+    // only applies in authoring mode. Add ?arrange=1 to get a saved layout back.
+    if (!authoring) return null;
     try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; }
   }
   function store(layout) {
