@@ -250,7 +250,7 @@
     const N = card.N;
     const labelRow = N <= 16 ? 26 : (N <= 32 && !small ? 50 : 0);
     const M = { l: small ? 44 : 56, r: 12, t: 46, b: 16 + labelRow };
-    const H = customLayout() ? Math.max(200, Math.round(box.clientHeight)) : (small ? 160 : 155);
+    const H = customLayout() ? Math.max(200, Math.round(box.clientHeight)) : (small ? 185 : 210);
     const PW = W - M.l - M.r;
     const PH = H - M.t - M.b;
     const y = (a) => M.t + (1 - a) / 2 * PH;
