@@ -105,6 +105,34 @@
             <b id="nar-title">Every qubit starts at 0</b>
             <span id="nar-body"></span>
           </p>
+          <section class="notes">
+            <article class="panel note" id="speedup" data-panel="speedup" data-title="Speedup">
+          <h2 class="panel-title">What Grover actually buys you</h2>
+          <p>The pop-science version says a quantum computer tries every answer at once. If that were true,
+          this would take one step. It doesn't. It takes about <b>π/4 · √N</b> rounds: a <b>square-root
+          speedup</b>. Not O(1), not exponential. Quadratic.</p>
+          <table class="compare" id="compare"></table>
+            </article>
+
+            <article class="panel note" id="rsa" data-panel="rsa" data-title="RSA">
+          <h2 class="panel-title">From these cards to real RSA</h2>
+          <ul class="bullets">
+            <li>Every card is two <i>different</i> primes multiplied together, the same shape as an RSA key:
+            multiplying is easy, undoing it is hard.</li>
+            <li>The biggest card is <b>35</b>, a 6-bit number, run on <b>8 qubits</b>. A real RSA key is
+            <b>2048 bits</b>, about 617 digits.</li>
+            <li>Grover isn't the threat to RSA. Even with its square-root speedup, a 2048-bit key still needs
+            on the order of <b>2<sup>512</sup> rounds</b>.</li>
+            <li>Shor's algorithm is, and the estimates keep falling: about <b>20 million</b> noisy qubits for
+            RSA-2048 (Gidney and Ekerå, 2019), then <b>under a million</b> (Gidney, 2025).</li>
+            <li>The hardware isn't there yet, which is why post-quantum cryptography is already rolling out
+            ahead of it.</li>
+          </ul>
+          <p class="hint">Squares like 9 = 3 × 3 work in the demo too, but RSA always uses two different
+          primes, so the hand sticks to those.</p>
+            </article>
+
+          </section>
         </div>
 
         <aside class="side">
@@ -135,34 +163,6 @@
 
 
 
-      <section class="notes">
-        <article class="panel note" id="speedup" data-panel="speedup" data-title="Speedup">
-          <h2 class="panel-title">What Grover actually buys you</h2>
-          <p>The pop-science version says a quantum computer tries every answer at once. If that were true,
-          this would take one step. It doesn't. It takes about <b>π/4 · √N</b> rounds: a <b>square-root
-          speedup</b>. Not O(1), not exponential. Quadratic.</p>
-          <table class="compare" id="compare"></table>
-        </article>
-
-        <article class="panel note" id="rsa" data-panel="rsa" data-title="RSA">
-          <h2 class="panel-title">From these cards to real RSA</h2>
-          <ul class="bullets">
-            <li>Every card is two <i>different</i> primes multiplied together, the same shape as an RSA key:
-            multiplying is easy, undoing it is hard.</li>
-            <li>The biggest card is <b>35</b>, a 6-bit number, run on <b>8 qubits</b>. A real RSA key is
-            <b>2048 bits</b>, about 617 digits.</li>
-            <li>Grover isn't the threat to RSA. Even with its square-root speedup, a 2048-bit key still needs
-            on the order of <b>2<sup>512</sup> rounds</b>.</li>
-            <li>Shor's algorithm is, and the estimates keep falling: about <b>20 million</b> noisy qubits for
-            RSA-2048 (Gidney and Ekerå, 2019), then <b>under a million</b> (Gidney, 2025).</li>
-            <li>The hardware isn't there yet, which is why post-quantum cryptography is already rolling out
-            ahead of it.</li>
-          </ul>
-          <p class="hint">Squares like 9 = 3 × 3 work in the demo too, but RSA always uses two different
-          primes, so the hand sticks to those.</p>
-        </article>
-
-      </section>
       <section class="compile-row" id="compile">
         <div class="panel compile" data-panel="compile" data-title="Compilation">
           <div class="panel-head">

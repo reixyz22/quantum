@@ -808,3 +808,7 @@ kbd {
   .compile-grid { grid-template-columns: minmax(0, 1fr); }
   .steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; align-items: start; }
 }
+
+/* the two cards sit under the chart, filling the column the code panel outgrows */
+.stage-main .notes { margin-top: 0; }
+@media (max-width: 900px) { .stage-main .notes { grid-template-columns: minmax(0, 1fr); } }
