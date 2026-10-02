@@ -13,11 +13,7 @@ from __future__ import annotations
 
 
 def average(amounts: list[float]) -> float:
-    """Return the mean of the list.
-
-    You need the total, and how many there are.
-    """
-    raise NotImplementedError("write me")
+    return sum(amounts) / len(amounts)
 
 
 def reflect_one(value: float, avg: float) -> float:
@@ -29,16 +25,19 @@ def reflect_one(value: float, avg: float) -> float:
 
     Work the arithmetic out from that description. It is one line.
     """
-    raise NotImplementedError("write me")
+    difference = abs(value - avg)
+    direction = 0
+    if avg > value:
+        direction = 1
+    else:
+        direction = -1
+
+    return avg + (difference * direction)
 
 
 def diffuse(amounts: list[float]) -> list[float]:
-    """Return a NEW list with every amplitude reflected about the average.
-
-    Use the two functions above. Build a new list, don't edit the one you
-    were handed.
-    """
-    raise NotImplementedError("write me")
+    a = average(amounts)
+    return [reflect_one(x, a) for x in amounts]
 
 
 # ---------------------------------------------------------------------------
