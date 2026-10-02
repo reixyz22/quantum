@@ -759,3 +759,6 @@ kbd {
 .pcard[aria-checked="true"] .pc-meta,
 .pcard:hover .pc-meta,
 .pcard:focus-visible .pc-meta { opacity: 1; }
+
+/* A custom layout is the user's own canvas, so let it use the whole window. */
+.demo-wrap:has(.board.custom) { max-width: none; padding-inline: 1rem; }
