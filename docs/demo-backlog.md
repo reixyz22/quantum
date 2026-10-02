@@ -48,3 +48,15 @@ versions with `simulate_moment_steps` gives those for free.
   chapter 5's gates, the native CZ count, and SWAPs on a line-shaped chip, each
   compared against sizing both registers naively.
 - The RSA note is bullets on screen rather than paragraphs.
+
+## Parked 2026-10-02, after round 1
+
+Site work stops here. It is good enough to send, and further polish only pays
+off if a final round is confirmed. Resume this list then, not before.
+
+- Step into `oracle()` and `diffuse()` while the demo runs, instead of calling
+  them as opaque boxes. Waits on the Ch06+ rewrite either way.
+- The page is still a long scroll. The jump chips are the cheap fix that
+  shipped; the real fix is deciding what does not belong on it at all.
+- Arranged layouts now span the full window, so a saved layout is the fastest
+  way to get a one-screen view for a specific conversation.
