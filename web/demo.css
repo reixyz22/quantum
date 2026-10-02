@@ -1,7 +1,7 @@
 /* Demo page. Global tokens live in styles.css; nothing here hardcodes a colour. */
 
 .demo-wrap {
-  max-width: 78rem;
+  max-width: min(110rem, 100%);
   margin: 0 auto;
   padding: 1rem 1.25rem 3rem;
 }
