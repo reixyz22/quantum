@@ -15,6 +15,7 @@
 
   const $ = (id) => document.getElementById(id);
   const SVG = "http://www.w3.org/2000/svg";
+  const NL = String.fromCharCode(10);
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function el(tag, attrs, parent) {
@@ -1051,17 +1052,19 @@
 
   const thousands = (v) => v.toLocaleString("en-US");
 
-  function registerBoxes() {
+  function registerBoxes(aBits, bBits) {
+    const a = aBits === undefined ? card.aBits : aBits;
+    const b = bBits === undefined ? card.bBits : bBits;
     const box = (from, count) => {
       let cells = "";
       for (let i = from; i < from + count; i++) cells += `<span class="q">q${i}</span>`;
       return cells;
     };
     return `<div class="regs">` +
-      `<div class="reg a"><div class="qs">${box(0, card.aBits)}</div>` +
-      `<span class="cap">register a · holds up to ${2 ** card.aBits - 1}</span></div>` +
-      `<div class="reg b"><div class="qs">${box(card.aBits, card.bBits)}</div>` +
-      `<span class="cap">register b · holds up to ${2 ** card.bBits - 1}</span></div>` +
+      `<div class="reg a"><div class="qs">${box(0, a)}</div>` +
+      `<span class="cap">register a · holds up to ${2 ** a - 1}</span></div>` +
+      `<div class="reg b"><div class="qs">${box(a, b)}</div>` +
+      `<span class="cap">register b · holds up to ${2 ** b - 1}</span></div>` +
       `</div>`;
   }
 
@@ -1082,52 +1085,62 @@
       `→ ${bHalf}`.padEnd(9) + `→ ${c.bBits} bits`;
     const line3 = " ".repeat(40) + `${c.aBits} + ${c.bBits} = ${c.n} qubits, ${c.N} labels`;
 
+    const naiveBits = naive.qubits / 2;
+    const stat = (label, mine, theirs) =>
+      `<tr><th>${label}</th><td class="them">${theirs}</td><td class="me">${mine}</td></tr>`;
+
     $("cmp-steps").innerHTML =
-      `<li><h4>Size the registers from the target alone</h4>` +
-        `<pre class="calc">${escapeHtml([line1, line2, line3].join("\n"))}</pre>` +
-        registerBoxes() +
-        `<p>Both bounds come from ${c.target} itself, never from its factors. Sizing a register to fit the ` +
-        `real answer would leak how big the answer is.</p>` +
-        `<div class="versus">` +
-          `<div class="was"><span class="vs-tag">first version</span>` +
-            `<b>${naive.qubits} qubits · ${2 ** naive.qubits} labels</b>` +
-            `<span>both registers sized for the biggest factor ${c.target} could have</span></div>` +
-          `<div class="now"><span class="vs-tag">after the bound</span>` +
-            `<b>${c.n} qubits · ${c.N} labels</b>` +
-            `<span>a ≤ b caps a at √${c.target}, so register a only needs ${c.aBits} bits</span></div>` +
+      `<div class="sizing">` +
+        `<pre class="calc">${escapeHtml([line1, line2, line3].join(NL))}</pre>` +
+        `<div class="two-up">` +
+          `<div class="opt them">` +
+            `<span class="vs-tag">both registers sized the same</span>` +
+            registerBoxes(naiveBits, naiveBits) +
+          `</div>` +
+          `<div class="opt me">` +
+            `<span class="vs-tag">bounded by a &le; &radic;${c.target}</span>` +
+            registerBoxes() +
+          `</div>` +
         `</div>` +
-        `<p class="mine">One qubit smaller, half the search space, and ${ours.rounds} Grover rounds instead ` +
-        `of ${naive.rounds}. Working that bound out is the part of this project I am proudest of: the ` +
-        `registers do not have to be the same size, and the target alone tells you how small the first one ` +
-        `can be. Compilers call this bitwidth analysis. I got there by asking why both registers were ` +
-        `sized the same in the first place.</p></li>` +
+        `<table class="compare sizing-table">` +
+          `<thead><tr><th></th><th>same size</th><th>bounded</th></tr></thead><tbody>` +
+          stat("qubits", c.n, naive.qubits) +
+          stat("labels to search", thousands(c.N), thousands(2 ** naive.qubits)) +
+          stat("Grover rounds", ours.rounds, naive.rounds) +
+          stat("CZ per oracle", thousands(ours.cz), thousands(naive.cz)) +
+          stat("SWAPs on a line", thousands(ours.swaps), thousands(naive.swaps)) +
+          `</tbody></table>` +
+        `<p class="mine">Both bounds come from ${c.target} itself, never from its factors. ` +
+        `<code>a &le; b</code> caps <code>a</code> at &radic;${c.target}, so register a needs ` +
+        `${c.aBits} bits instead of ${naiveBits}. Compilers call this bitwidth analysis.</p>` +
+      `</div>` +
 
-      `<li><h4>Write the oracle as gates</h4>` +
-        `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
-        `<p>${ours.gates} gates, depth ${ours.depth}. The X gates disguise the zeros so that one controlled ` +
-        `Z fires on exactly one label, then the X gates take the disguise back off. This is the chapter 5 ` +
-        `code, and chapter 9 swaps the marked label for a multiplier that computes the rule instead.</p></li>` +
-
-      `<li><h4>Lower it to what the chip actually has</h4>` +
-        `<div class="figs">` +
-          `<div><b>${thousands(ours.nativeOps)}</b><span>native operations</span></div>` +
-          `<div><b>${thousands(ours.cz)}</b><span>two-qubit CZ gates</span></div>` +
-          `<div><b>${thousands(ours.nativeDepth)}</b><span>depth</span></div>` +
-        `</div>` +
-        `<p>No chip has a ${c.n}-qubit controlled Z, so one line of my circuit becomes ` +
-        `${thousands(ours.nativeOps)} operations the hardware can actually run. This is the work a quantum ` +
-        `compiler exists to do, and the knob it has here is scratch qubits: spend a few and the same gate ` +
-        `gets much cheaper.</p></li>` +
-
-      `<li><h4>Route it onto a chip</h4>` +
-        `<div class="figs">` +
-          `<div><b>${thousands(ours.swaps)}</b><span>SWAPs the layout needs</span></div>` +
-          `<div><b>${thousands(ours.swaps * 3)}</b><span>CZs those SWAPs cost</span></div>` +
-        `</div>` +
-        `<p>Qubits only interact with their neighbours, so the routing bill is set by the hardware's wiring, ` +
-        `not by the circuit. A line is close to the worst case, and it is what makes connectivity worth ` +
-        `paying for: neutral-atom machines like Infleqtion's are far better connected, and an atom can be ` +
-        `physically moved rather than SWAPped, which is routing cost the compiler never has to spend.</p></li>`;
+      `<details class="after">` +
+        `<summary>What Cirq does with the circuit after that</summary>` +
+        `<ol class="steps-inner">` +
+        `<li><h4>The oracle as gates</h4>` +
+          `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
+          `<p>${ours.gates} gates, depth ${ours.depth}. The X gates disguise the zeros so one controlled Z ` +
+          `fires on exactly one label, then take the disguise back off. Chapter 9 replaces the marked label ` +
+          `with a multiplier that computes the rule.</p></li>` +
+        `<li><h4>Lowered to native gates</h4>` +
+          `<div class="figs">` +
+            `<div><b>${thousands(ours.nativeOps)}</b><span>native operations</span></div>` +
+            `<div><b>${thousands(ours.cz)}</b><span>two-qubit CZ gates</span></div>` +
+            `<div><b>${thousands(ours.nativeDepth)}</b><span>depth</span></div>` +
+          `</div>` +
+          `<p>No chip has a ${c.n}-qubit controlled Z, so Cirq rewrites it into CZs and single-qubit ` +
+          `rotations. Spending a few scratch qubits makes the same gate much cheaper.</p></li>` +
+        `<li><h4>Routed onto a line of qubits</h4>` +
+          `<div class="figs">` +
+            `<div><b>${thousands(ours.swaps)}</b><span>SWAPs the layout needs</span></div>` +
+            `<div><b>${thousands(ours.swaps * 3)}</b><span>CZs those SWAPs cost</span></div>` +
+          `</div>` +
+          `<p>Qubits only interact with their neighbours, so this bill is set by the wiring. Neutral-atom ` +
+          `machines like Infleqtion's are better connected, and an atom can be moved rather than ` +
+          `SWAPped.</p></li>` +
+        `</ol>` +
+      `</details>`;
 
   }
 

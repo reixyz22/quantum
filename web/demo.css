@@ -867,3 +867,46 @@ kbd {
 .versus .was b { color: var(--text-2); text-decoration: line-through; text-decoration-thickness: 1px; }
 .versus span:last-child { font-size: 0.78rem; color: var(--text-2); }
 .mine { margin: 0; }
+
+/* ---------- the register sizing, both ways, side by side ---------- */
+
+.sizing { display: flex; flex-direction: column; gap: 0.8rem; }
+.two-up {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.8rem;
+}
+.opt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--surface-2);
+}
+.opt.me { border-color: var(--series-orange); background: var(--orange-wash); }
+.opt.them { opacity: 0.85; }
+.opt.them .vs-tag { color: var(--muted); }
+.opt.me .vs-tag { color: var(--series-orange); }
+
+.sizing-table { width: 100%; }
+.sizing-table th { text-align: left; font-weight: 600; color: var(--text-2); }
+.sizing-table thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.sizing-table td { text-align: right; font-family: var(--mono); font-size: 0.85rem; }
+.sizing-table td.them { color: var(--muted); }
+.sizing-table td.me { color: var(--text); font-weight: 700; }
+
+/* the compiler's own work, folded away until someone wants it */
+.after { border-top: 1px solid var(--line); margin-top: 0.4rem; padding-top: 0.6rem; }
+.after > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+  list-style: revert;
+}
+.after > summary:hover { color: var(--primary); }
+.steps-inner { margin: 0.8rem 0 0; padding-left: 1.2rem; display: grid; gap: 1rem; }
+.steps-inner h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+.steps-inner p { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--text-2); }
