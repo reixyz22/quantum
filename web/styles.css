@@ -363,3 +363,37 @@ li.road .status { margin-left: auto; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- the scrollbar is a hint that there is more below ---------- */
+
+html {
+  overflow-y: scroll;              /* always there, so the page never looks finished */
+  scrollbar-color: var(--primary) var(--surface-2);
+  scrollbar-width: auto;
+}
+::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 4px solid var(--surface-2);
+  border-radius: 999px;
+  min-height: 3rem;
+}
+::-webkit-scrollbar-thumb:hover { border-width: 3px; }
+
+/* ---------- text size is a real control, not a glyph ---------- */
+
+.size-controls button[data-size] {
+  min-width: 3.1rem;
+  min-height: 3.1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.size-controls button[data-size="1"] {
+  background: var(--primary);
+  color: var(--primary-ink);
+  font-size: 1.15rem;
+}
+.size-controls button[data-size="1"]:hover { filter: brightness(1.08); }

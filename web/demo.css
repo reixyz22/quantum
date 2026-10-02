@@ -779,14 +779,6 @@ kbd {
 /* the angle view now sits in the side column, next to the code */
 .angle-panel .angle-box svg { max-width: 13rem; }
 
-/* text size is an offered accommodation, so it should look like a control */
-.size-controls button[data-size] {
-  border-color: var(--axis);
-  color: var(--text);
-  font-weight: 700;
-}
-.size-controls button[data-size="1"] { font-size: 1rem; }
-
 /* Arrange is ours, not the visitor's */
 .layout-only[hidden] { display: none !important; }
 
@@ -807,17 +799,8 @@ kbd {
 .hero-angle .angle-box svg { max-width: 21rem; }
 .hero-angle .hint { margin: 0.6rem 0 0; font-size: 0.85rem; }
 
-/* the hand slides up and left into the space the taller panel leaves open */
-.hand {
-  position: relative;
-  z-index: 2;
-  margin-top: -4.5rem;
-  transform: translateX(-7%);
-}
 
-@media (max-width: 1100px) {
-  .hand { margin-top: 0; transform: none; }
-}
+
 @media (max-width: 900px) {
   .hero-angle { min-width: 0; }
   .hero-angle .angle-box svg { max-width: 13rem; }
