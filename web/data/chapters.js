@@ -13,7 +13,7 @@ window.CHAPTERS = [
       <pre>0.354|000&rangle;  -  0.354|111&rangle;</pre>
       <ol>
         <li>A <b>label</b> is the thing inside the brackets. One of the possible readings.</li>
-        <li>An <b>amplitude</b> is the number in front. It is <i>not</i> the sign &mdash; the sign is just part of the number, the way it is in &minus;5.</li>
+        <li>An <b>amplitude</b> is the number in front. It is <i>not</i> the sign. The sign is just part of the number, the way it is in &minus;5.</li>
         <li>Square an amplitude to get the chance of reading that label. 0.354&sup2; = 0.125, so 12.5%.</li>
       </ol>
       <p>The amplitude is always the <b>bigger</b> number, because squaring something under 1 makes it smaller. If you ever end up with an amplitude smaller than its chance, you went the wrong way.</p>
@@ -39,7 +39,7 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
       <p><b>That asymmetry is the only reason Grover exists.</b> The whole trick is arranging signs so wrong answers cancel and the right one adds up.</p>
       <div class="check">
         <b>Check:</b> A label has amplitude &minus;0.5. What is its chance, and how do you know you went the right way?
-        <details><summary>Answer</summary>0.25, because (&minus;0.5)&sup2; = 0.25. And 0.5 is bigger than 0.25, which is what it should be &mdash; the amplitude is always the larger number.</details>
+        <details><summary>Answer</summary>0.25, because (&minus;0.5)&sup2; = 0.25. And 0.5 is bigger than 0.25, which is what it should be, since the amplitude is always the larger number.</details>
       </div>`,
   },
   {
@@ -69,10 +69,10 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
         <tr><td>3</td><td>8</td><td>0.125</td><td>0.354</td></tr>
         <tr><td>4</td><td>16</td><td>0.0625</td><td>0.25</td></tr>
       </table>
-      <p>Amplitudes never add to 1 &mdash; <b>chances do</b>. The amplitudes actually sum to &radic;N, which is the same &radic;N that shows up in the speedup.</p>
+      <p>Amplitudes never add to 1. <b>Chances do</b>. The amplitudes actually sum to &radic;N, which is the same &radic;N that shows up in the speedup.</p>
 
       <h2>Why this matters twice</h2>
-      <p>This even split is Grover's starting line: nothing is favoured, because we don't know anything yet. And it's also the ceiling on simulation &mdash; 50 qubits means tracking about a quadrillion numbers, which is why real hardware exists.</p>
+      <p>This even split is Grover's starting line: nothing is favoured, because we don't know anything yet. And it's also the ceiling on simulation: 50 qubits means tracking about a quadrillion numbers, which is why real hardware exists.</p>
       <p>All n of those H gates run in a single Moment, so this costs depth 1 no matter how many qubits.</p>
       <div class="check">
         <b>Check:</b> 6 qubits. How many labels, what chance on each, what amplitude on each?
@@ -99,17 +99,17 @@ H|1&rangle; &rarr; 0.707|0&rangle; &minus; 0.707|1&rangle;</pre>
       read 1" is what the hardware naturally does. Native gate sets are also small on
       purpose: one phase gate plus single-qubit X reaches everything, so you don't need
       2<sup>n</sup> flavours of it.</p>
-      <p>All three are <code>@</code> because CZ is <b>symmetric</b> &mdash; any of them can be called the control. Compare a CNOT, which has a <code>@</code> and an <code>X</code>, because its two qubits do different jobs.</p>
+      <p>All three are <code>@</code> because CZ is <b>symmetric</b>, so any of them can be called the control. Compare a CNOT, which has a <code>@</code> and an <code>X</code>, because its two qubits do different jobs.</p>
 
       <h2>Why only |111&rangle; changes</h2>
       <pre>after step 0: 0.354|000&rangle; + ... + 0.354|111&rangle;
 after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
-      <p>The code reads <code>cirq.Z(q2).controlled_by(q0, q1)</code>: <i>if q0 and q1 both read 1, flip the sign of q2</i>. Two labels satisfy that &mdash; <code>110</code> and <code>111</code> &mdash; so the gate fires on both. Then:</p>
+      <p>The code reads <code>cirq.Z(q2).controlled_by(q0, q1)</code>: <i>if q0 and q1 both read 1, flip the sign of q2</i>. Two labels satisfy that, <code>110</code> and <code>111</code>, so the gate fires on both. Then:</p>
       <ol>
         <li><code>110</code>: q2 is <b>0</b>, and Z does nothing to a 0. Unchanged.</li>
         <li><code>111</code>: q2 is <b>1</b>, so Z leaves a minus.</li>
       </ol>
-      <p>The gate fires twice and only one of them visibly does anything. Nothing stores the number 7 &mdash; <code>111</code> is special because it <i>is</i> the all-1s label, which is the gate's own condition.</p>
+      <p>The gate fires twice and only one of them visibly does anything. Nothing stores the number 7. <code>111</code> is special because it <i>is</i> the all-1s label, which is the gate's own condition.</p>
 
       <h2>And now the point of the chapter</h2>
       <pre>local counts: Counter({0: 120, 1: 116, 3: 108, 6: 101, 5: 97, 7: 95, 2: 83, 4: 80})</pre>
@@ -141,12 +141,12 @@ after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
       <p><b><code>15</code> is written down. <code>3</code> and <code>5</code> are not.</b> Where the minus lands is something the code discovers.</p>
 
       <h2>Sizing the two registers</h2>
-      <p>The rule requires <code>a &le; b</code>, which means <code>a</code> can never exceed &radic;target. For 62 that caps <code>a</code> at 7 &mdash; 3 bits &mdash; while <code>b</code> needs 5 to hold 31. Sizing both for the worst case wastes 2 qubits and quadruples the search space for nothing.</p>
-      <p>Classically this pass is called <b>bitwidth analysis</b>: prove a bound on a value, then narrow its representation. The quantum twist is that narrowing a register also shrinks what Grover has to search, so it pays twice &mdash; and since the cost is &radic;N, a 4&times; smaller space halves the round count.</p>
+      <p>The rule requires <code>a &le; b</code>, which means <code>a</code> can never exceed &radic;target. For 62 that caps <code>a</code> at 7, which is 3 bits, while <code>b</code> needs 5 to hold 31. Sizing both for the worst case wastes 2 qubits and quadruples the search space for nothing.</p>
+      <p>Classically this pass is called <b>bitwidth analysis</b>: prove a bound on a value, then narrow its representation. The quantum twist is that narrowing a register also shrinks what Grover has to search, so it pays twice, and since the cost is &radic;N, a 4&times; smaller space halves the round count.</p>
       <p>Both bounds come from the <b>target</b>, never from its factors. Sizing <code>a</code> to fit the real factor would leak how big that factor is through the register width.</p>
 
       <h2>The caveat, said out loud</h2>
-      <p>Our code finds the winner by looping over every label and asking the rule. That loop <i>is</i> brute force. But <b>the loop is the simulator's cost, not the algorithm's</b> &mdash; it's how a laptop pretends to be a circuit. A real oracle is a multiplier built out of gates, which computes rather than remembers, and never enumerates anything.</p>
+      <p>Our code finds the winner by looping over every label and asking the rule. That loop <i>is</i> brute force. But <b>the loop is the simulator's cost, not the algorithm's</b>. It's how a laptop pretends to be a circuit. A real oracle is a multiplier built out of gates, which computes rather than remembers, and never enumerates anything.</p>
       <div class="check">
         <b>Check:</b> Target 12 is not on the playable list. Why not?
         <details><summary>Answer</summary>It has two answers, 2&times;6 and 3&times;4. More winners changes how many rounds Grover needs, and guessing that number wrong makes it overshoot, so the targets are filtered to semiprimes, which have exactly one.</details>
@@ -160,7 +160,7 @@ after step 1: 0.354|000&rangle; + ... &minus; 0.354|111&rangle;</pre>
     status: "in progress",
     body: `
       <p><b>This chapter is an exercise.</b> Three blanks, same self-checking runner as
-      chapter 6 &mdash; except this one also compares your gates against chapter 4's matrix
+      chapter 6, except this one also compares your gates against chapter 4's matrix
       and tells you whether they do the same job.</p>
       <pre>python ch05_compiling.py        # or pass a target: ... 21</pre>
 
@@ -239,7 +239,7 @@ target  21 (3 x 7), winner 0110111: 5 gates, depth 3 -> same operation
           │
 4: ───────Z───────</pre>
       <p>Three gates, depth 3, replacing a 32&times;32 matrix. The check uses
-      <code>cirq.allclose_up_to_global_phase</code> on the two unitaries &mdash; collapse each
+      <code>cirq.allclose_up_to_global_phase</code> on the two unitaries: collapse each
       circuit to the single matrix it represents and compare. "Up to global phase" matters
       because multiplying an <i>entire</i> state by &minus;1 changes no measurement, so two
       circuits differing only by that are the same operation.</p>
@@ -283,7 +283,7 @@ identical to the hand-built X sandwich: True</pre>
 
       <h2>The idea</h2>
       <p>Reflect every amplitude around the average. The minus sign the oracle left is
-      invisible to measurement, but it is <b>not</b> invisible to an average &mdash; it drags the
+      invisible to measurement, but it is <b>not</b> invisible to an average. It drags the
       average down. Reflecting then throws the winner far up while the losers collapse.</p>
       <p>No quantum code in the file. It's a plain Python list, which is genuinely how the
       amplitudes are stored.</p>
@@ -323,7 +323,7 @@ return out</pre></li>
       </ul>
 
       <h2>What passing looks like</h2>
-      <p>When all three work it runs one extra demo &mdash; 8 labels, winner marked:</p>
+      <p>When all three work it runs one extra demo, 8 labels with the winner marked:</p>
       <pre>before: [0.354, ... , -0.354]
 after:  [0.177, ... ,  0.885]
 winner's chance went from 12.5% to 78.3%</pre>
@@ -332,7 +332,7 @@ winner's chance went from 12.5% to 78.3%</pre>
       docstrings are the whole spec, and <code>reflect_one</code> really is one line.</p>
       <div class="check">
         <b>Check:</b> After the oracle you have <code>[0.5, 0.5, &minus;0.5, 0.5]</code>. What's the average, and where does each amplitude land?
-        <details><summary>Answer</summary>Average 0.25. Reflecting gives <code>[0, 0, 1, 0]</code> &mdash; the three losers sat just above the average so they drop to zero, and the winner sat far below it so it goes to 1.0. That's 100% on the winner after one round.</details>
+        <details><summary>Answer</summary>Average 0.25. Reflecting gives <code>[0, 0, 1, 0]</code>. The three losers sat just above the average so they drop to zero, and the winner sat far below it so it goes to 1.0. That's 100% on the winner after one round.</details>
       </div>`,
   },
   {
@@ -413,12 +413,12 @@ winner's chance went from 12.5% to 78.3%</pre>
 1: ───────X───</pre>
       <pre>after step 0: 0.707|00&rangle; + 0.707|10&rangle;
 after step 1: 0.707|00&rangle; + 0.707|11&rangle;</pre>
-      <p>H splits q0 in half; nothing touches q1, so only the first digit varies. Then CNOT says "if q0 is 1, flip q1", applied to each part separately &mdash; <code>|00&rangle;</code> stays, <code>|10&rangle;</code> becomes <code>|11&rangle;</code>. Now the two qubits always agree.</p>
+      <p>H splits q0 in half; nothing touches q1, so only the first digit varies. Then CNOT says "if q0 is 1, flip q1", applied to each part separately: <code>|00&rangle;</code> stays, <code>|10&rangle;</code> becomes <code>|11&rangle;</code>. Now the two qubits always agree.</p>
       <p><b>Why it's entangled:</b> try to split <code>[0.707, 0, 0, 0.707]</code> back into one list per qubit. You'd need <code>a&middot;d = 0</code> but also <code>a&middot;c &ne; 0</code> and <code>b&middot;d &ne; 0</code>, and both can't hold. Neither qubit has a state of its own any more. There's only the pair.</p>
       <p><b>Why it's an appendix:</b> Grover doesn't use it. This is the standard hello-world and a fair interview question, but nothing downstream depends on it.</p>
       <div class="check">
         <b>Check:</b> Delete the CNOT. Is the result still entangled?
-        <details><summary>Answer</summary>No. Without it you get <code>0.707|00&rangle; + 0.707|10&rangle;</code>, which splits cleanly into <code>[0.707, 0.707] &otimes; [1, 0]</code> &mdash; q0 is in a superposition, q1 is plainly |0&rangle;.</details>
+        <details><summary>Answer</summary>No. Without it you get <code>0.707|00&rangle; + 0.707|10&rangle;</code>, which splits cleanly into <code>[0.707, 0.707] &otimes; [1, 0]</code>. q0 is in a superposition, q1 is plainly |0&rangle;.</details>
       </div>`,
   },
 ];

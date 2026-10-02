@@ -42,6 +42,11 @@
           <p class="lede">Pick a card. Each one is two primes multiplied together, the same shape as an
           RSA key. Then watch one amplitude out of <span id="hero-n">32</span> climb until measuring it
           hands you the factors.</p>
+          <nav class="jumps" aria-label="Jump to a section">
+            <a href="#compile">How 15 fits into 5 qubits</a>
+            <a href="#speedup">What Grover actually buys you</a>
+            <a href="#rsa">From these cards to real RSA</a>
+          </nav>
         </div>
         <div class="stat" data-panel="stat" data-title="Chance" aria-live="polite">
           <span class="stat-label">Chance of reading the answer</span>
@@ -69,22 +74,29 @@
               <svg id="bars" role="img" aria-labelledby="bars-desc"><desc id="bars-desc">Bar chart of the amplitude on every label.</desc></svg>
               <div class="tip" id="bar-tip" hidden></div>
             </div>
-            <p class="peek-note">This is a <b>sci-fi peek</b>. Real hardware can't show you amplitudes, measuring
-            wipes them out. I'm coloring the answer orange so you can follow it; the computer has no idea which
-            bar it is, the oracle just checks a rule.</p>
-
-            <div class="transport" role="group" aria-label="Playback">
-              <button class="t-btn" id="btn-reset" aria-label="Reset to the start" title="Reset (R)">⟲</button>
-              <button class="t-btn" id="btn-back" aria-label="Step back" title="Back (←)">◀</button>
-              <button class="t-btn t-play" id="btn-play" aria-label="Play" title="Play / pause (space)">▶ Play</button>
-              <button class="t-btn" id="btn-step" aria-label="Step forward" title="Step (→)">Step ▶</button>
-              <div class="speed" role="group" aria-label="Speed">
-                <button data-speed="0.5">0.5×</button>
-                <button data-speed="1" aria-pressed="true">1×</button>
-                <button data-speed="2">2×</button>
+            <div class="controls-row">
+              <div class="transport" role="group" aria-label="Playback">
+                <button class="t-btn" id="btn-reset" aria-label="Reset to the start" title="Reset (R)">⟲</button>
+                <button class="t-btn" id="btn-back" aria-label="Step back" title="Back (←)">◀</button>
+                <button class="t-btn t-play" id="btn-play" aria-label="Play" title="Play / pause (space)">▶ Play</button>
+                <button class="t-btn" id="btn-step" aria-label="Step forward" title="Step (→)">Step ▶</button>
+                <div class="speed" role="group" aria-label="Speed">
+                  <button data-speed="0.5">0.5×</button>
+                  <button data-speed="1" aria-pressed="true">1×</button>
+                  <button data-speed="2">2×</button>
+                </div>
+                <div class="where" id="where">start</div>
               </div>
-              <div class="where" id="where">start</div>
+              <div class="measure-inline" data-panel="measure" data-title="Measure">
+                <button class="measure-btn" id="btn-measure">Measure</button>
+                <button class="keep-btn" id="btn-keep" hidden>Keep going past it →</button>
+              </div>
             </div>
+            <div class="result" id="result" aria-live="polite"></div>
+            <p class="peek-note"><b>Sci-fi peek.</b> Real hardware can't show you amplitudes, measuring
+            wipes them out. The answer is orange so you can follow it; the computer has no idea which
+            bar it is, the oracle just checks a rule. <span id="measure-hint">Measuring gives one label at
+            random, weighted by those chances. Try it now, or wait for the sweet spot.</span></p>
 
             <details class="table-view">
               <summary>Table view of every amplitude</summary>
@@ -120,36 +132,9 @@
         </aside>
       </section>
 
-      <section class="lower">
-        <div class="panel" data-panel="curve" data-title="Chance by round">
-          <div class="panel-head">
-            <h2 class="panel-title">Chance of the answer, by round</h2>
-          </div>
-          <div class="chart-box" id="curve-box"><svg id="curve" role="img" aria-label="Line chart of the answer's chance after each round"></svg>
-            <div class="tip" id="curve-tip" hidden></div></div>
-          <p class="hint">The dashed line is the planned stop, worked out before running. Go past it and watch what happens.</p>
-        </div>
 
-        <div class="panel" data-panel="angle" data-title="Angle">
-          <div class="panel-head">
-            <h2 class="panel-title">The same thing, as an angle</h2>
-          </div>
-          <div class="angle-box" id="angle-box"><svg id="angle" role="img" aria-label="The state drawn as an arrow turning toward the answer"></svg></div>
-          <p class="hint" id="angle-note">Each round turns the arrow by the same small angle.</p>
-        </div>
 
-        <div class="panel measure" data-panel="measure" data-title="Measure">
-          <div class="panel-head">
-            <h2 class="panel-title">Measure</h2>
-          </div>
-          <p class="hint" id="measure-hint">Measuring gives one label at random, weighted by those chances. Try it now, or wait for the sweet spot.</p>
-          <button class="measure-btn" id="btn-measure">Measure</button>
-          <button class="keep-btn" id="btn-keep" hidden>Keep going past it →</button>
-          <div class="result" id="result" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="compile-row">
+      <section class="compile-row" id="compile">
         <div class="panel compile" data-panel="compile" data-title="Compilation">
           <div class="panel-head">
             <div>
@@ -167,9 +152,8 @@
           </div>
         </div>
       </section>
-
       <section class="notes">
-        <article class="panel note" data-panel="speedup" data-title="Speedup">
+        <article class="panel note" id="speedup" data-panel="speedup" data-title="Speedup">
           <h2 class="panel-title">What Grover actually buys you</h2>
           <p>The pop-science version says a quantum computer tries every answer at once. If that were true,
           this would take one step. It doesn't. It takes about <b>π/4 · √N</b> rounds: a <b>square-root
@@ -177,7 +161,7 @@
           <table class="compare" id="compare"></table>
         </article>
 
-        <article class="panel note" data-panel="rsa" data-title="RSA">
+        <article class="panel note" id="rsa" data-panel="rsa" data-title="RSA">
           <h2 class="panel-title">From these cards to real RSA</h2>
           <ul class="bullets">
             <li>Every card is two <i>different</i> primes multiplied together, the same shape as an RSA key:
@@ -207,6 +191,25 @@
         </article>
       </section>
 
+      <section class="lower">
+        <div class="panel" data-panel="curve" data-title="Chance by round">
+          <div class="panel-head">
+            <h2 class="panel-title">Chance of the answer, by round</h2>
+          </div>
+          <div class="chart-box" id="curve-box"><svg id="curve" role="img" aria-label="Line chart of the answer's chance after each round"></svg>
+            <div class="tip" id="curve-tip" hidden></div></div>
+          <p class="hint">The dashed line is the planned stop, worked out before running. Go past it and watch what happens.</p>
+        </div>
+
+        <div class="panel" data-panel="angle" data-title="Angle">
+          <div class="panel-head">
+            <h2 class="panel-title">The same thing, as an angle</h2>
+          </div>
+          <div class="angle-box" id="angle-box"><svg id="angle" role="img" aria-label="The state drawn as an arrow turning toward the answer"></svg></div>
+          <p class="hint" id="angle-note">Each round turns the arrow by the same small angle.</p>
+        </div>
+
+      </section>
     </div>
 
     <p class="keys hint">Keys: <kbd>space</kbd> play / pause · <kbd>→</kbd> step · <kbd>←</kbd> back ·
