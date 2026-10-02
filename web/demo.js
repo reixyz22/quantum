@@ -1104,10 +1104,9 @@
 
       `<li><h4>Write the oracle as gates</h4>` +
         `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
-        `<p>${ours.gates} gates, depth ${ours.depth}. X gates disguise the zeros, one controlled Z fires on ` +
-        `the answer, then the X gates take the disguise back off. This is the chapter 5 code I wrote. It's ` +
-        `aimed using the known answer, which is the shortcut; the real version compiles the multiplier ` +
-        `instead.</p></li>` +
+        `<p>${ours.gates} gates, depth ${ours.depth}. The X gates disguise the zeros so that one controlled ` +
+        `Z fires on exactly one label, then the X gates take the disguise back off. This is the chapter 5 ` +
+        `code, and chapter 9 swaps the marked label for a multiplier that computes the rule instead.</p></li>` +
 
       `<li><h4>Lower it to what the chip actually has</h4>` +
         `<div class="figs">` +
@@ -1115,19 +1114,20 @@
           `<div><b>${thousands(ours.cz)}</b><span>two-qubit CZ gates</span></div>` +
           `<div><b>${thousands(ours.nativeDepth)}</b><span>depth</span></div>` +
         `</div>` +
-        `<p>No chip has a ${c.n}-qubit controlled Z. Cirq rewrites that one line into CZs and single-qubit ` +
-        `rotations. It does it without borrowing any spare qubits; with a few scratch qubits it gets much ` +
-        `cheaper, which is one of the tradeoffs a compiler gets to make.</p></li>` +
+        `<p>No chip has a ${c.n}-qubit controlled Z, so one line of my circuit becomes ` +
+        `${thousands(ours.nativeOps)} operations the hardware can actually run. This is the work a quantum ` +
+        `compiler exists to do, and the knob it has here is scratch qubits: spend a few and the same gate ` +
+        `gets much cheaper.</p></li>` +
 
       `<li><h4>Route it onto a chip</h4>` +
         `<div class="figs">` +
-          `<div><b>+${thousands(ours.swaps)}</b><span>SWAPs inserted</span></div>` +
-          `<div><b>+${thousands(ours.swaps * 3)}</b><span>more two-qubit gates</span></div>` +
+          `<div><b>${thousands(ours.swaps)}</b><span>SWAPs the layout needs</span></div>` +
+          `<div><b>${thousands(ours.swaps * 3)}</b><span>CZs those SWAPs cost</span></div>` +
         `</div>` +
-        `<p>Qubits can only interact with their neighbours. On a chip wired as a line, Cirq has to SWAP ` +
-        `them next to each other first, and every SWAP costs three more two-qubit gates. A line is close to ` +
-        `a worst case: neutral-atom machines like Infleqtion's are far better connected, and an atom can ` +
-        `sometimes be physically moved instead of SWAPped.</p></li>`;
+        `<p>Qubits only interact with their neighbours, so the routing bill is set by the hardware's wiring, ` +
+        `not by the circuit. A line is close to the worst case, and it is what makes connectivity worth ` +
+        `paying for: neutral-atom machines like Infleqtion's are far better connected, and an atom can be ` +
+        `physically moved rather than SWAPped, which is routing cost the compiler never has to spend.</p></li>`;
 
   }
 
