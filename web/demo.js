@@ -1049,7 +1049,6 @@
   // from Cirq: register sizing, chapter 5's gates, those gates lowered to CZ,
   // and the SWAPs it takes to route them onto a chip shaped like a line.
 
-  const WORDS = ["No", "One", "Two", "Three", "Four"];
   const thousands = (v) => v.toLocaleString("en-US");
 
   function registerBoxes() {
@@ -1118,31 +1117,6 @@
         `a worst case: neutral-atom machines like Infleqtion's are far better connected, and an atom can ` +
         `sometimes be physically moved instead of SWAPped.</p></li>`;
 
-    const row = (label, a, b) =>
-      `<tr><td>${label}</td><td class="ours">${a}</td><td>${b}</td></tr>`;
-    $("cmp-table").innerHTML =
-      "<thead><tr><th></th><th>sized by bounds</th><th>both full size</th></tr></thead><tbody>" +
-      row("qubits", ours.qubits, naive.qubits) +
-      row("labels", thousands(2 ** ours.qubits), thousands(2 ** naive.qubits)) +
-      row("Grover rounds", ours.rounds, naive.rounds) +
-      row("CZ per oracle", thousands(ours.cz), thousands(naive.cz)) +
-      row("SWAPs per oracle", thousands(ours.swaps), thousands(naive.swaps)) +
-      row("CZ over the run", thousands(ours.cz * ours.rounds), thousands(naive.cz * naive.rounds)) +
-      "</tbody>";
-
-    const saved = naive.qubits - ours.qubits;
-    if (saved <= 0) {
-      $("cmp-why").textContent =
-        "On this card both registers are already as small as they go, so there's nothing to save. " +
-        "Try 15 or 35 to see the difference.";
-    } else {
-      const ratio = (naive.cz * naive.rounds) / (ours.cz * ours.rounds);
-      $("cmp-why").textContent =
-        `${WORDS[saved] || saved} ${saved === 1 ? "qubit" : "qubits"} saved, and about ` +
-        `${ratio.toFixed(ratio < 3 ? 1 : 0)}× fewer two-qubit gates over the whole run. Two-qubit gates are ` +
-        `where most of the error comes from, so fewer of them is a better chance the answer survives. ` +
-        `Counts are for the oracle on its own.`;
-    }
   }
 
   // ------------------------------------------------------------- assembly

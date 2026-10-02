@@ -113,8 +113,9 @@
               <h2 class="panel-title">The code, line by line</h2>
             </div>
             <ol class="code" id="code"></ol>
-            <p class="repo-note">This is the high-level shape. The diffuser, the register-size
-            calculator and the oracle are all hand-written Python, chapter by chapter, at
+            <p class="repo-note">This is the high-level shape. Built in Cirq: every bar on this page
+            is a state vector Cirq computed, and the page only draws them. The diffuser, the
+            register-size calculator and the oracle are written out chapter by chapter at
             <a href="https://github.com/reixyz22/quantum">github.com/reixyz22/quantum</a>.</p>
           </div>
 
@@ -161,16 +162,6 @@
           primes, so the hand sticks to those.</p>
         </article>
 
-        <article class="panel note" data-panel="real" data-title="What's real">
-          <h2 class="panel-title">What's actually real on this page</h2>
-          <p><b>Every bar is a number Cirq computed.</b> <code>tools/export_demo.py</code> builds the real
-          circuit, steps through it moment by moment, and saves each state vector. This page only draws them.</p>
-          <p>The oracle checks the rule <code>a × b == target</code>. The factors are never written down
-          anywhere.</p>
-          <p>One honest caveat: to build that oracle, the simulator asks the rule about every label, which is
-          brute force. A real oracle would be a multiplier built out of gates that never enumerates anything.
-          That's the one I'm building next.</p>
-        </article>
       </section>
       <section class="compile-row" id="compile">
         <div class="panel compile" data-panel="compile" data-title="Compilation">
@@ -182,11 +173,6 @@
           </div>
           <div class="compile-grid">
             <ol class="steps" id="cmp-steps"></ol>
-            <div class="cmp-side">
-              <h3 class="cmp-h">What one qubit buys</h3>
-              <table class="compare" id="cmp-table"></table>
-              <p class="cmp-why" id="cmp-why"></p>
-            </div>
           </div>
         </div>
       </section>
