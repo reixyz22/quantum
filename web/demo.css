@@ -836,3 +836,34 @@ kbd {
 .stage-main .notes { gap: 0.8rem; }
 
 @media (max-width: 1100px) { .hand { margin-top: 0; } }
+
+/* ---------- the before/after on the register sizing ---------- */
+
+.versus {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0 0.6rem;
+}
+.versus > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--surface-2);
+}
+.versus .now { border-color: var(--series-orange); background: var(--orange-wash); }
+.vs-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.versus .now .vs-tag { color: var(--series-orange); }
+.versus b { font-size: 1.05rem; letter-spacing: -0.01em; }
+.versus .was b { color: var(--text-2); text-decoration: line-through; text-decoration-thickness: 1px; }
+.versus span:last-child { font-size: 0.78rem; color: var(--text-2); }
+.mine { margin: 0; }

@@ -1087,8 +1087,20 @@
         `<pre class="calc">${escapeHtml([line1, line2, line3].join("\n"))}</pre>` +
         registerBoxes() +
         `<p>Both bounds come from ${c.target} itself, never from its factors. Sizing a register to fit the ` +
-        `real answer would leak how big the answer is. Sizing both for the biggest possible factor would ` +
-        `take ${naive.qubits} qubits and ${2 ** naive.qubits} labels.</p></li>` +
+        `real answer would leak how big the answer is.</p>` +
+        `<div class="versus">` +
+          `<div class="was"><span class="vs-tag">first version</span>` +
+            `<b>${naive.qubits} qubits · ${2 ** naive.qubits} labels</b>` +
+            `<span>both registers sized for the biggest factor ${c.target} could have</span></div>` +
+          `<div class="now"><span class="vs-tag">after the bound</span>` +
+            `<b>${c.n} qubits · ${c.N} labels</b>` +
+            `<span>a ≤ b caps a at √${c.target}, so register a only needs ${c.aBits} bits</span></div>` +
+        `</div>` +
+        `<p class="mine">One qubit smaller, half the search space, and ${ours.rounds} Grover rounds instead ` +
+        `of ${naive.rounds}. Working that bound out is the part of this project I am proudest of: the ` +
+        `registers do not have to be the same size, and the target alone tells you how small the first one ` +
+        `can be. Compilers call this bitwidth analysis. I got there by asking why both registers were ` +
+        `sized the same in the first place.</p></li>` +
 
       `<li><h4>Write the oracle as gates</h4>` +
         `<pre class="circuit">${escapeHtml(ours.diagram)}</pre>` +
