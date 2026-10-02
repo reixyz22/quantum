@@ -50,10 +50,10 @@
 // Text-size controls shared by every page. Remembered per device.
 (function () {
   const KEY = "q-font-size";
-  const MIN = 14, MAX = 34, STEP = 2;
+  const MIN = 12, MAX = 34, STEP = 2;
 
   function read() {
-    try { return parseInt(localStorage.getItem(KEY), 10) || 17; } catch { return 17; }
+    try { return parseInt(localStorage.getItem(KEY), 10) || 14; } catch { return 14; }
   }
   function apply(px) {
     document.documentElement.style.setProperty("--font-size", px + "px");
