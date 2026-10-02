@@ -250,7 +250,7 @@
     const N = card.N;
     const labelRow = N <= 16 ? 26 : (N <= 32 && !small ? 50 : 0);
     const M = { l: small ? 44 : 56, r: 12, t: 46, b: 16 + labelRow };
-    const H = customLayout() ? Math.max(200, Math.round(box.clientHeight)) : (small ? 215 : 250);
+    const H = customLayout() ? Math.max(200, Math.round(box.clientHeight)) : (small ? 160 : 155);
     const PW = W - M.l - M.r;
     const PH = H - M.t - M.b;
     const y = (a) => M.t + (1 - a) / 2 * PH;
@@ -1123,7 +1123,8 @@
 
   function rebuild() {
     $("hero-n").textContent = card.N;
-    $("chart-sub").textContent =
+    const subEl2 = $("chart-sub");
+    if (subEl2) subEl2.textContent =
       `${card.N} labels, one bar each. Above the line is positive, below is negative.`;
     $("btn-measure").textContent = "Measure";
     $("result").innerHTML = "";

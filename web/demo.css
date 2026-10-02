@@ -13,7 +13,7 @@
   grid-template-columns: 1fr auto;
   gap: 2rem;
   align-items: start;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.4rem;
 }
 .eyebrow {
   margin: 0 0 0.4rem;
@@ -55,7 +55,7 @@
   display: flex;
   justify-content: center;
   gap: 0.25rem;
-  padding: 0.6rem 0 0.9rem;
+  padding: 0.3rem 0 0.5rem;
   perspective: 1200px;
 }
 
@@ -63,8 +63,8 @@
   --rot: 0deg;
   --lift: 0px;
   position: relative;
-  width: 7rem;
-  height: 8.4rem;
+  width: 6.4rem;
+  height: 6.7rem;
   margin: 0 -0.15rem;
   padding: 0;
   border: 1px solid var(--line);
@@ -719,7 +719,7 @@ kbd {
 
 /* ---------- jump links, for a visitor with five minutes ---------- */
 
-.jumps { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.jumps { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
 .jumps a {
   font-size: 0.8rem;
   font-weight: 600;
@@ -791,12 +791,12 @@ kbd {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 26rem;
+  min-width: 22rem;
   position: relative;
   z-index: 1;
 }
 .hero-angle .panel-head { margin-bottom: 0.4rem; }
-.hero-angle .angle-box svg { max-width: 21rem; }
+.hero-angle .angle-box svg { max-width: 13rem; }
 .hero-angle .hint { margin: 0.6rem 0 0; font-size: 0.85rem; }
 
 
@@ -815,3 +815,13 @@ kbd {
 /* the two cards sit under the chart, filling the column the code panel outgrows */
 .stage-main .notes { margin-top: 0; }
 @media (max-width: 900px) { .stage-main .notes { grid-template-columns: minmax(0, 1fr); } }
+
+/* tighten the chart column so the cards below reach the fold */
+.chart-panel .panel-head { margin-bottom: 0.3rem; }
+.chart-panel .panel-sub { font-size: 0.78rem; }
+.chart-panel .controls-row { margin-top: 0.5rem; padding-top: 0.5rem; }
+.chart-panel .peek-note { margin-top: 0.4rem; font-size: 0.76rem; }
+.narration { padding: 0.45rem 0.8rem; font-size: 0.84rem; }
+.stage { gap: 0.8rem; }
+.stage-main { gap: 0.6rem; }
+.stage-main .notes { gap: 0.8rem; }
