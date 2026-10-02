@@ -417,6 +417,7 @@
 
   function buildCurve() {
     const svg = $("curve");
+    if (!svg) return;
     clear(svg);
     const box = svg.parentElement;
     const W = Math.max(260, Math.round(box.clientWidth));
@@ -458,6 +459,7 @@
   }
 
   function drawCurve() {
+    if (!curve.svg) return;
     const done = roundsShown(frame);
     const { x, y, M, H } = curve;
     while (curve.dots.firstChild) curve.dots.removeChild(curve.dots.firstChild);
@@ -483,6 +485,7 @@
   function wireCurveHover() {
     const svg = $("curve");
     const tip = $("curve-tip");
+    if (!svg || !tip) return;
     svg.addEventListener("mousemove", (e) => {
       const done = roundsShown(frame);
       if (done < 0) return;
@@ -696,7 +699,8 @@
 
   function updateLive(amps, avg) {
     const chance = chanceOf(amps);
-    $("stat-value").textContent = pct(chance);
+    const statEl = $("stat-value");
+    if (statEl) statEl.textContent = pct(chance);
     document.querySelectorAll("[data-cell]").forEach((span) => {
       span.textContent = amp(amps[+span.dataset.cell]);
     });
@@ -943,7 +947,8 @@
         : "past the sweet spot, falling";
     }
     else text = `a blind guess is 1 in ${card.N}`;
-    $("stat-sub").textContent = text;
+    const subEl = $("stat-sub");
+    if (subEl) subEl.textContent = text;
   }
 
   function updateButtons() {
@@ -1023,7 +1028,9 @@
       rows.push(`<tr${i === card.winner ? ' class="win"' : ""}><td>${bitsOf(i, card.n)}</td>` +
         `<td>${a}</td><td>${b}</td><td>${amp(v)}</td><td>${pct(v * v)}</td></tr>`);
     }
-    $("amp-table").innerHTML =
+    const tableEl = $("amp-table");
+    if (!tableEl) return;
+    tableEl.innerHTML =
       "<thead><tr><th>label</th><th>a</th><th>b</th><th>amplitude</th><th>chance</th></tr></thead>" +
       `<tbody>${rows.join("")}</tbody>`;
   }
@@ -1227,7 +1234,7 @@
           if (seen.get(entry.target) !== key) { seen.set(entry.target, key); later(); }
         }
       });
-      ["bars-box", "curve-box"].forEach((id) => watcher.observe($(id)));
+      ["bars-box", "curve-box"].forEach((id) => { const n = $(id); if (n) watcher.observe(n); });
     } else {
       window.addEventListener("resize", later);
     }

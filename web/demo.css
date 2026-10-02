@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 2rem;
-  align-items: end;
+  align-items: start;
   margin-bottom: 0.75rem;
 }
 .eyebrow {
@@ -299,14 +299,16 @@ svg .hover-col { fill: var(--text); opacity: 0.06; pointer-events: none; }
 .stage-main { display: grid; gap: 1rem; min-width: 0; }
 
 .narration {
-  padding: 1rem 1.1rem;
-  border-radius: 0.8rem;
-  background: linear-gradient(135deg, var(--orange-wash), var(--blue-wash));
-  border: 1px solid var(--line);
-  min-height: 7.5rem;
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: var(--surface);
+  font-size: 0.88rem;
+  color: var(--text);
+  min-height: 0;
 }
-.narration h3 { margin: 0 0 0.35rem; font-size: 1rem; }
-.narration p { margin: 0; color: var(--text-2); }
+.narration b { color: var(--text); margin-right: 0.4rem; }
 .narration.swap { animation: nar-in 380ms ease-out; }
 @keyframes nar-in {
   from { opacity: 0; transform: translateY(4px); }
@@ -762,3 +764,41 @@ kbd {
 
 /* A custom layout is the user's own canvas, so let it use the whole window. */
 .demo-wrap:has(.board.custom) { max-width: none; padding-inline: 1rem; }
+
+/* ---------- where the real code lives ---------- */
+
+.repo-note {
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+.repo-note a { color: var(--primary); }
+
+/* the angle view now sits in the side column, next to the code */
+.angle-panel .angle-box svg { max-width: 13rem; }
+
+/* text size is an offered accommodation, so it should look like a control */
+.size-controls button[data-size] {
+  border-color: var(--axis);
+  color: var(--text);
+  font-weight: 700;
+}
+.size-controls button[data-size="1"] { font-size: 1rem; }
+
+/* Arrange is ours, not the visitor's */
+.layout-only[hidden] { display: none !important; }
+
+/* the card row never scrolls, it just sits there */
+.hand, .board.custom [data-panel="hand"] { overflow: visible; }
+
+/* the angle view sits beside the headline, where the repeated percentage used to be */
+.hero-angle { align-self: stretch; display: flex; flex-direction: column; justify-content: center; min-width: 15rem; }
+.hero-angle .panel-head { margin-bottom: 0.4rem; }
+.hero-angle .angle-box svg { max-width: 9.5rem; }
+.hero-angle .hint { margin: 0.4rem 0 0; }
+
+@media (max-width: 900px) {
+  .hero-angle { min-width: 0; }
+}

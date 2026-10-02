@@ -22,7 +22,7 @@
       </nav>
       <div class="size-controls" aria-label="Display">
         <button id="layout-reset" class="layout-only" hidden title="Go back to the default layout">Reset layout</button>
-        <button id="layout-toggle" aria-pressed="false" title="Drag, resize and lock the panels">✥ Arrange</button>
+        <button id="layout-toggle" class="layout-only" hidden aria-pressed="false" title="Drag, resize and lock the panels">✥ Arrange</button>
         <button id="sound-toggle" aria-label="Turn sound off" aria-pressed="true">🔊</button>
         <button data-theme-toggle aria-label="Switch theme">☾</button>
         <button data-size="-1" aria-label="Smaller text">A−</button>
@@ -48,10 +48,12 @@
             <a href="#rsa">From these cards to real RSA</a>
           </nav>
         </div>
-        <div class="stat" data-panel="stat" data-title="Chance" aria-live="polite">
-          <span class="stat-label">Chance of reading the answer</span>
-          <span class="stat-value" id="stat-value">3.1%</span>
-          <span class="stat-sub" id="stat-sub">a blind guess is 1 in 32</span>
+        <div class="panel angle-panel hero-angle" data-panel="angle" data-title="Angle">
+          <div class="panel-head">
+            <h2 class="panel-title">The same thing, as an angle</h2>
+          </div>
+          <div class="angle-box" id="angle-box"><svg id="angle" role="img" aria-label="The state drawn as an arrow turning toward the answer"></svg></div>
+          <p class="hint" id="angle-note">Each round turns the arrow by the same small angle.</p>
         </div>
       </section>
 
@@ -97,17 +99,12 @@
             wipes them out. The answer is orange so you can follow it; the computer has no idea which
             bar it is, the oracle just checks a rule. <span id="measure-hint">Measuring gives one label at
             random, weighted by those chances. Try it now, or wait for the sweet spot.</span></p>
-
-            <details class="table-view">
-              <summary>Table view of every amplitude</summary>
-              <div class="table-scroll"><table id="amp-table"></table></div>
-            </details>
           </div>
 
-          <div class="narration" data-panel="narration" data-title="Narration" aria-live="polite">
-            <h3 id="nar-title">Every qubit starts at 0</h3>
-            <p id="nar-body"></p>
-          </div>
+          <p class="narration" data-panel="narration" data-title="Narration" aria-live="polite">
+            <b id="nar-title">Every qubit starts at 0</b>
+            <span id="nar-body"></span>
+          </p>
         </div>
 
         <aside class="side">
@@ -116,6 +113,9 @@
               <h2 class="panel-title">The code, line by line</h2>
             </div>
             <ol class="code" id="code"></ol>
+            <p class="repo-note">This is the high-level shape. The diffuser, the register-size
+            calculator and the oracle are all hand-written Python, chapter by chapter, at
+            <a href="https://github.com/reixyz22/quantum">github.com/reixyz22/quantum</a>.</p>
           </div>
 
           <div class="panel frames" data-panel="vars" data-title="Variables">
@@ -191,25 +191,6 @@
         </article>
       </section>
 
-      <section class="lower">
-        <div class="panel" data-panel="curve" data-title="Chance by round">
-          <div class="panel-head">
-            <h2 class="panel-title">Chance of the answer, by round</h2>
-          </div>
-          <div class="chart-box" id="curve-box"><svg id="curve" role="img" aria-label="Line chart of the answer's chance after each round"></svg>
-            <div class="tip" id="curve-tip" hidden></div></div>
-          <p class="hint">The dashed line is the planned stop, worked out before running. Go past it and watch what happens.</p>
-        </div>
-
-        <div class="panel" data-panel="angle" data-title="Angle">
-          <div class="panel-head">
-            <h2 class="panel-title">The same thing, as an angle</h2>
-          </div>
-          <div class="angle-box" id="angle-box"><svg id="angle" role="img" aria-label="The state drawn as an arrow turning toward the answer"></svg></div>
-          <p class="hint" id="angle-note">Each round turns the arrow by the same small angle.</p>
-        </div>
-
-      </section>
     </div>
 
     <p class="keys hint">Keys: <kbd>space</kbd> play / pause · <kbd>→</kbd> step · <kbd>←</kbd> back ·

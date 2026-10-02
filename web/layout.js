@@ -17,6 +17,10 @@
   const board = document.getElementById("board");
   const toggle = document.getElementById("layout-toggle");
   const resetButton = document.getElementById("layout-reset");
+
+  // Arrange is an authoring tool, not something a visitor needs. ?arrange=1 brings it back.
+  const authoring = String((typeof location === "object" && location.search) || "").indexOf("arrange") > -1;
+  if (authoring && toggle) toggle.hidden = false;
   const hint = document.getElementById("arrange-hint");
   if (!board || !toggle) return;
 
